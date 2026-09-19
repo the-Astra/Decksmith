@@ -56,6 +56,31 @@ return {
             k_ds_rates = 'RATES',
             k_ds_MODIFIERS = 'MODIFIERS',
             k_ds_export = 'EXPORT DECK',
+            k_ds_saved_decks = 'SAVED DECKS',
+            k_ds_no_decks = 'No .jkr decks found',
+            k_ds_select_preview = 'Select a deck to preview all saved data',
+            k_ds_load_deck = 'Load Deck',
+            k_ds_full_deck_preview = 'FULL DECK PREVIEW',
+            k_ds_saved_deck_preset = 'SAVED DECK PRESET',
+            k_ds_invalid_deck = 'Invalid or unsupported .jkr file',
+            k_ds_one_deck = '1 DECK',
+            k_ds_yes = 'Yes',
+            k_ds_no = 'No',
+            k_ds_none = 'None',
+            k_ds_value = 'Value',
+            k_ds_data = 'Data',
+            k_ds_empty = '(empty)',
+            k_ds_run_rules = 'RUN RULES',
+            k_ds_economy = 'ECONOMY',
+            k_ds_shop_rates = 'SHOP RATES',
+            k_ds_starting_jokers_title = 'STARTING JOKERS',
+            k_ds_starting_consumables_title = 'STARTING CONSUMABLES',
+            k_ds_starting_vouchers_title = 'STARTING VOUCHERS',
+            k_ds_bans_modifiers = 'BANS & MODIFIERS',
+            k_ds_deck_info = 'DECK INFO',
+            k_ds_jokers = 'JOKERS',
+            k_ds_consumables = 'CONSUMABLES',
+            k_ds_vouchers = 'VOUCHERS',
 
             -- Run Select
             run_select_ds_import = 'Import',
@@ -88,6 +113,9 @@ return {
         v_dictionary = {
             a_ds_jokers_remaining = '#1# Joker(s) remaining',
             a_ds_consumables_remaining = '#1# Consumable(s) remaining',
+            a_ds_deck_count = '#1# DECKS',
+            a_ds_preview_count = '#1#  #2#',
+            a_ds_preview_count_missing = '#1#  #2# (#3# MISSING)',
         }
     }
 }

@@ -11,20 +11,19 @@ Decksmith.customize_menu = SMODS.RunSelectPage:extend {
     end
 }
 
---[[ Decksmith.customize_menu {
+Decksmith.customize_menu {
     key = 'import',
-    optional = function() return SMODS.RunSelect.Setup.choices.deck_choice == 'b_ds_custom' and #Decksmith.get_valid_deck_names() > 0 end,
+    optional = function() return SMODS.RunSelect.Setup.choices.deck_choice == 'b_ds_custom' and next(Decksmith.get_valid_deck_names()) ~= nil end,
     definition = function(self)
-        return Decksmith.create_menu_page({
-            key = 'k_ds_import',
-            no_reset = true,
-            no_random = true,
-            options = {
-                
-            }
-        })
+        local state = Decksmith.import_state
+        if state.rebuilding then
+            state.rebuilding = nil
+        else
+            Decksmith.reset_import_selection()
+        end
+        return Decksmith.create_import_page()
     end,
-} ]]
+}
 
 Decksmith.customize_menu {
     key = 'general',
@@ -54,17 +53,24 @@ Decksmith.customize_menu {
         G.GAME.starting_params.ante_scaling = tonumber(Decksmith.start_args.ds_ante_scaling) or G.GAME.starting_params.ante_scaling
         G.GAME.win_ante = tonumber(Decksmith.start_args.ds_winning_ante) and to_big(tonumber(Decksmith.start_args.ds_winning_ante)) or G.GAME.win_ante
 
-        -- Area changing
+        local joker_slots = tonumber(Decksmith.start_args.ds_joker_slots)
+        if joker_slots and G.jokers then
+            G.jokers.config.card_limits.base = joker_slots
+            G.jokers.config.card_limits.mod = 0
+            G.jokers:handle_card_limit()
+            G.GAME.starting_params.joker_slots = joker_slots
+        end
+
+        local consumable_slots = tonumber(Decksmith.start_args.ds_consumable_slots)
+        if consumable_slots and G.consumeables then
+            G.consumeables.config.card_limits.base = consumable_slots
+            G.consumeables.config.card_limits.mod = 0
+            G.consumeables:handle_card_limit()
+            G.GAME.starting_params.consumable_slots = consumable_slots
+        end
+
         G.E_MANAGER:add_event(Event({
             func = function()
-                if tonumber(Decksmith.start_args.ds_joker_slots) then
-                    G.jokers:change_size(Decksmith.start_args.ds_joker_slots - G.GAME.starting_params.joker_slots)
-                end
-
-                if tonumber(Decksmith.start_args.ds_consumable_slots) then
-                    G.consumeables:change_size(Decksmith.start_args.ds_consumable_slots - G.GAME.starting_params.consumable_slots)
-                end
-
                 if tonumber(Decksmith.start_args.ds_shop_slots) then
                     change_shop_size(Decksmith.start_args.ds_shop_slots - 2)
                 end
@@ -302,6 +308,9 @@ Decksmith.customize_menu({
         return localize('run_select_ds_starting_vouchers') -- tried to make this dynamic but gave up lol
     end,
     start_run = function(self, choice)
+        for _, area in ipairs(G.I.CARDAREA or {}) do
+            if SMODS.should_handle_limit(area) then area:handle_card_limit() end
+        end
         G.TAROT_INTERRUPT = G.STATE
         for k, _ in pairs(choice) do
             G.GAME.used_vouchers[k] = true
