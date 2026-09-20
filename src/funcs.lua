@@ -228,10 +228,12 @@ local import_list_width = 3.7
 
 function Decksmith.reset_import_selection()
     local state = Decksmith.import_state
+    Decksmith.import_card_areas = nil
     state.selected = nil
     state.preview = nil
     state.rows = {}
     state.error = nil
+    state.selected_button = nil
 end
 
 local function ds_import_display_key(key)
@@ -409,15 +411,17 @@ local function ds_import_scrollbox(nodes, width, height)
     return {n = G.UIT.R, config = {align = 'cm'}, nodes = panel_nodes}
 end
 
-local function ds_import_remove_card_areas()
-    if not Decksmith.import_card_areas then return end
-    for _, area in pairs(Decksmith.import_card_areas) do
-        if area.cards then
-            for i = #area.cards, 1, -1 do area.cards[i]:remove() end
+function Decksmith.remove_import_card_areas()
+    if Decksmith.import_card_areas then
+        for _, area in pairs(Decksmith.import_card_areas) do
+            if area.cards then
+                remove_all(area.cards)
+                area.cards = {}
+            end
         end
-        for i = #G.I.CARDAREA, 1, -1 do
-            if G.I.CARDAREA[i] == area then table.remove(G.I.CARDAREA, i) end
-        end
+    end
+    for i = #G.I.CARD, 1, -1 do
+        if G.I.CARD[i].decksmith_import_preview then G.I.CARD[i]:remove() end
     end
     Decksmith.import_card_areas = nil
 end
@@ -450,6 +454,7 @@ local function ds_import_card_area(title, values, colour)
         if center then
             for _ = 1, amount do
                 local card = Card(area.T.x, area.T.y, G.CARD_W * 0.48, G.CARD_H * 0.48, nil, center)
+                card.decksmith_import_preview = true
                 area:emplace(card)
                 card.states.click.can = false
                 card.states.drag.can = true
@@ -478,7 +483,7 @@ local function ds_import_card_area(title, values, colour)
 end
 
 local function ds_import_build_card_nodes(settings)
-    ds_import_remove_card_areas()
+    Decksmith.remove_import_card_areas()
     settings = settings or {}
     local nodes = {}
     local specs = {
@@ -559,13 +564,13 @@ end
 
 local function ds_import_build_preview_nodes(state)
     if state.error then
-        ds_import_remove_card_areas()
+        Decksmith.remove_import_card_areas()
         return {{n = G.UIT.R, config = {align = 'cm', padding = 0.1}, nodes = {
             ds_import_text(state.error, 0.34, G.C.RED)
         }}}
     end
     if not state.preview then
-        ds_import_remove_card_areas()
+        Decksmith.remove_import_card_areas()
         return {{n = G.UIT.R, config = {align = 'cm', minh = 2}, nodes = {
             ds_import_text(localize('k_ds_select_preview'), 0.38)
         }}}
@@ -594,11 +599,14 @@ local function ds_import_build_preview_nodes(state)
     return nodes
 end
 
+local function ds_import_preview_content(state)
+    return {n = G.UIT.C, config = {align = 'tm', minw = import_content_width}, nodes = ds_import_build_preview_nodes(state)}
+end
+
 function Decksmith.create_import_page()
     Decksmith.refresh_import_files()
     local state = Decksmith.import_state
     local file_nodes = ds_import_build_file_nodes(state)
-    local preview_nodes = ds_import_build_preview_nodes(state)
     return {n = G.UIT.R, config = {align = 'cm', padding = 0.08}, nodes = {
         {n = G.UIT.C, config = {align = 'tm', colour = G.C.BLACK, r = 0.1, padding = 0.12, minw = import_list_width, minh = Decksmith.page_height}, nodes = {
             {n = G.UIT.R, config = {align = 'cl', minw = 3.35, minh = 0.62, padding = 0.04}, nodes = {
@@ -616,7 +624,7 @@ function Decksmith.create_import_page()
         }},
         {n = G.UIT.C, config = {align = 'ct', colour = G.C.BLACK, r = 0.1, padding = 0.12, minw = 6.8, minh = Decksmith.page_height}, nodes = {
             {n = G.UIT.R, config = {align = 'ct', minh = 5.72}, nodes = {
-                {n = G.UIT.C, config = {align = 'tm', minw = import_content_width}, nodes = preview_nodes}
+                {n = G.UIT.C, config = {id = 'ds_import_preview', align = 'tm', minw = import_content_width, minh = 5.72}, nodes = {ds_import_preview_content(state)}}
             }}
         }}
     }}
@@ -624,9 +632,17 @@ end
 
 G.FUNCS.ds_import_select = function(e)
     local state = Decksmith.import_state
+    if state.selected == e.config.ref_value then return end
+    if state.selected_button then state.selected_button.config.colour = G.C.BLUE end
+    state.selected_button = e
+    e.config.colour = G.C.GREEN
     Decksmith.select_import_file(e.config.ref_value)
-    state.rebuilding = true
-    Decksmith.reset_page()
+    local preview = G.OVERLAY_MENU:get_UIE_by_ID('ds_import_preview')
+    if not preview then return end
+    remove_all(preview.children)
+    preview.children = {}
+    Decksmith.remove_import_card_areas()
+    preview.UIBox:add_child(ds_import_preview_content(state), preview)
 end
 
 G.FUNCS.ds_import_load = function()
