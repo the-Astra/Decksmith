@@ -444,13 +444,12 @@ local function ds_import_card_area(title, values, colour)
     Decksmith.import_card_areas = Decksmith.import_card_areas or {}
     Decksmith.import_card_areas[#Decksmith.import_card_areas + 1] = area
 
-    local keys = {}
-    for key in pairs(values) do keys[#keys + 1] = key end
-    table.sort(keys)
+    local prototypes = {}
+    for _, v in pairs(values) do prototypes[#prototypes + 1] = v end
     local missing = 0
-    for _, key in ipairs(keys) do
-        local amount = type(values[key]) == 'number' and values[key] or 1
-        local center = G.P_CENTERS[key]
+    for _, v in ipairs(prototypes) do
+        local amount = type(values[v.key]) == 'number' and values[v.key] or 1
+        local center = G.P_CENTERS[v.key]
         if center then
             for _ = 1, amount do
                 local card = Card(area.T.x, area.T.y, G.CARD_W * 0.48, G.CARD_H * 0.48, nil, center)
@@ -670,30 +669,87 @@ function Decksmith.handle_duplicate_choices(page_def, choice, remove, start_tabl
                 end
 
                 if already_selected < selection_limit then
-                    if not SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key] then
-                        SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key] = 1
-                    else
-                        SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key] = SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key] + 1
-                    end
-                    start_table_ref[choice.config.center.key] = SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key]
+                    table.insert(SMODS.RunSelect.Setup.choices[page_def.key], { key = choice.config.center.key })
+                    start_table_ref = SMODS.RunSelect.Setup.choices[page_def.key]
                 else
                     if choice.juice_up then choice:juice_up() end
                     return
                 end
             else
-                SMODS.RunSelect.Setup.choices[page_def.key] = choice.config.center.key
+                SMODS.RunSelect.Setup.choices[page_def.key] = {{ key = choice.config.center.key }}
             end
-            if SMODS.RunSelect.Internals.preview_area then SMODS.RunSelect.Functions.populate_preview_ui(page_def.key, choice.config.center.key, page_def.silent) end
+            if SMODS.RunSelect.Internals.preview_area then Decksmith.handle_verbose_choices_preview(page_def.key, choice.config.center.key, page_def.silent) end
         else
-            SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key] = SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key] - 1
-            if SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key] <= 0 then
-                SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key] = nil
-            end
-            start_table_ref[choice.config.center.key] = SMODS.RunSelect.Setup.choices[page_def.key][choice.config.center.key]
+            table.remove(SMODS.RunSelect.Setup.choices[page_def.key], choice.index)
+            start_table_ref = SMODS.RunSelect.Setup.choices[page_def.key]
 
-            if SMODS.RunSelect.Internals.preview_area then SMODS.RunSelect.Functions.populate_preview_ui(page_def.key, choice, page_def.silent, true) end
+            if SMODS.RunSelect.Internals.preview_area then
+                for _, v in pairs(SMODS.RunSelect.Internals.preview_area.cards) do
+                    if v.index > choice.index then
+                        v.index = v.index - 1
+                    end
+                end
+                Decksmith.handle_verbose_choices_preview(page_def.key, choice, page_def.silent, true)
+            end
         end
     end
+end
+
+function Decksmith.handle_verbose_choices_preview(key, to_add, silent, _remove)
+    if SMODS.config.run_select_performance then silent = true end
+    local page_def = SMODS.RunSelect.Pages[key]
+
+    local selection_limit = SMODS.RunSelect.Functions.get_selection_limit(page_def)
+
+    if selection_limit == 1 and not _remove then
+        if G.E_MANAGER.queues.run_select then G.E_MANAGER:clear_queue('run_select') end
+        remove_all(SMODS.RunSelect.Internals.preview_area.cards)
+        SMODS.RunSelect.Internals.preview_area.cards = {}
+        remove_all(SMODS.RunSelect.Internals.preview_area_holding.cards)
+        SMODS.RunSelect.Internals.preview_area_holding.cards = {}
+    end
+
+    if _remove then
+        to_add:remove()
+        SMODS.RunSelect.Functions.update_preview_texts(page_def)
+        return
+    end
+
+    if not SMODS.RunSelect.Setup.choices[page_def.key] or (type(SMODS.RunSelect.Setup.choices[page_def.key]) == 'table' and not next(SMODS.RunSelect.Setup.choices[page_def.key])) then
+        return
+    end
+
+    local preview_area = SMODS.RunSelect.Internals.preview_area
+    local holding_area = SMODS.RunSelect.Internals.preview_area_holding
+    
+    SMODS.RunSelect.Internals.stack_size = SMODS.config.run_select_performance and math.min(5, page_def.preview_size or page_def.stack_size) or page_def.preview_size or page_def.stack_size
+    local card_size = page_def.sprite_size or {w = G.CARD_W, h = G.CARD_H}
+    if type(to_add) == 'table' then
+        local temp = {}
+        for k, v in pairs(to_add) do
+            table.insert(temp, v)
+        end
+        to_add = temp
+        SMODS.RunSelect.Internals.stack_size = #to_add
+    end
+    for j=1, SMODS.RunSelect.Internals.stack_size do
+        local card = page_def.create_selection_card and page_def:create_selection_card(type(to_add) == 'table' and to_add[j].key or to_add, j, preview_area) 
+        or Card(preview_area.T.x, preview_area.T.y, card_size.w, card_size.h, nil, G.P_CENTERS[type(to_add) == 'table' and to_add[j].key or to_add])
+        card.params.run_select_preview_card = page_def.key
+        if silent then
+            preview_area:emplace(card)
+        else
+            holding_area:emplace(card)
+            G.E_MANAGER:add_event(Event({
+                func = (function()
+                    play_sound('card1', math.random()*0.2 + 0.99, 0.35)
+                    if holding_area.cards and preview_area.cards then preview_area:draw_card_from(holding_area) end
+                    return true
+                end)
+            }), 'run_select')
+        end
+    end
+    SMODS.RunSelect.Functions.update_preview_texts(page_def)
 end
 
 function Decksmith.populate_defaults(page_def, start_table_ref)

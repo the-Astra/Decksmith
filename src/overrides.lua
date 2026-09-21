@@ -32,3 +32,12 @@ function Controller:queue_R_cursor_press(x, y)
         end
     end
 end
+
+local populate_preview_ref = SMODS.RunSelect.Functions.populate_preview_ui
+function SMODS.RunSelect.Functions.populate_preview_ui(key, to_add, silent, _remove)
+    if type(to_add) == 'table' and type(to_add[1]) == "table" then
+        Decksmith.handle_verbose_choices_preview(key, to_add, silent, _remove)
+    else
+        populate_preview_ref(key, to_add, silent, _remove)
+    end
+end

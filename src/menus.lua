@@ -181,29 +181,24 @@ Decksmith.customize_menu({
     generate_pool = function(self) return G.P_CENTER_POOLS.Joker end,
     selected_text = function(self, selection)
         if not selection then selection = {} end
-        local selected = 0
-        for k, count in pairs(selection) do
-            selected = selected + count
-        end
-        return localize{type = 'variable', key = 'a_ds_jokers_remaining', vars = {self:selection_limit() - selected}}
+        return localize{type = 'variable', key = 'a_ds_jokers_remaining', vars = {self:selection_limit() - #selection}}
     end,
     start_run = function(self, choice)
-        for k, count in pairs(choice) do
-            for i = 1, count do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after', delay = 0.7,
-                    func = function()
-                        local c = SMODS.add_card({key = k, skip_materialize = true, no_edition = true})
-                        c:start_materialize()
-                        return true
-                    end
-                }))
-            end
+        for _, v in pairs(choice) do
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after', delay = 0.7,
+                func = function()
+                    local c = SMODS.add_card({key = v.key, skip_materialize = true})
+                    c:start_materialize()
+                    return true
+                end
+            }))
         end
     end,
     create_selection_card = function(self, card_key, card_number, area)
         local card = Card(area.T.x, area.T.y, G.CARD_W, G.CARD_H, nil, G.P_CENTERS[card_key] or G.P_CENTERS.j_joker)
         card.ds_preview_card = self.key
+        card.index = card_number
         if Decksmith.start_args.banned_keys and Decksmith.start_args.banned_keys[card_key] then
             card.debuff = true
         end
@@ -243,29 +238,24 @@ Decksmith.customize_menu({
     generate_pool = function(self) return SMODS.merge_lists(Decksmith.get_consumable_pools()) end,
     selected_text = function(self, selection)
         if not selection then selection = {} end
-        local selected = 0
-        for k, count in pairs(selection) do
-            selected = selected + count
-        end
-        return localize{type = 'variable', key = 'a_ds_consumables_remaining', vars = {self:selection_limit() - selected}}
+        return localize{type = 'variable', key = 'a_ds_consumables_remaining', vars = {self:selection_limit() - #selection}}
     end,
     start_run = function(self, choice)
-        for k, count in pairs(choice) do
-            for i = 1, count do
-                G.E_MANAGER:add_event(Event({
-                    trigger = 'after', delay = 0.7,
-                    func = function()
-                        local c = SMODS.add_card({key = k, skip_materialize = true})
-                        c:start_materialize()
-                        return true
-                    end
-                }))
-            end
+        for _, v in pairs(choice) do
+            G.E_MANAGER:add_event(Event({
+                trigger = 'after', delay = 0.7,
+                func = function()
+                    local c = SMODS.add_card({key = v.key, skip_materialize = true})
+                    c:start_materialize()
+                    return true
+                end
+            }))
         end
     end,
     create_selection_card = function(self, card_key, card_number, area)
         local card = Card(area.T.x, area.T.y, G.CARD_W, G.CARD_H, nil, G.P_CENTERS[card_key] or G.P_CENTERS.c_strength)
         card.ds_preview_card = self.key
+        card.index = card_number
         if Decksmith.start_args.banned_keys and Decksmith.start_args.banned_keys[card_key] then
             card.debuff = true
         end
