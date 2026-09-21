@@ -458,9 +458,7 @@ local function ds_import_card_area(title, values, colour)
                 card.states.click.can = false
                 card.states.drag.can = true
                 card.states.hover.can = true
-                if v.edition then
-                    card:set_edition(v.edition, true, true)
-                end
+                Decksmith.apply_card_modifications(card, v)
             end
         else
             missing = missing + amount
@@ -736,8 +734,8 @@ function Decksmith.handle_verbose_choices_preview(key, to_add, silent, _remove)
         local card = page_def.create_selection_card and page_def:create_selection_card(type(to_add) == 'table' and to_add[j].key or to_add, j, preview_area) 
         or Card(preview_area.T.x, preview_area.T.y, card_size.w, card_size.h, nil, G.P_CENTERS[type(to_add) == 'table' and to_add[j].key or to_add])
         card.params.run_select_preview_card = page_def.key
-        if SMODS.RunSelect.Setup.choices[page_def.key][card.index] and SMODS.RunSelect.Setup.choices[page_def.key][card.index].edition then
-            card:set_edition(SMODS.RunSelect.Setup.choices[page_def.key][card.index].edition, true, true)
+        if SMODS.RunSelect.Setup.choices[page_def.key][card.index] then
+            Decksmith.apply_card_modifications(card, SMODS.RunSelect.Setup.choices[page_def.key][card.index])
         end
         if silent then
             preview_area:emplace(card)
@@ -759,5 +757,11 @@ function Decksmith.populate_defaults(page_def, start_table_ref)
     SMODS.RunSelect.Setup.choices[page_def.key] = SMODS.RunSelect.Setup.choices[page_def.key] or {}
     for k, v in pairs(start_table_ref) do
         SMODS.RunSelect.Setup.choices[page_def.key][k] = v
+    end
+end
+
+function Decksmith.apply_card_modifications(card, args)
+    if args.edition then
+        card:set_edition(args.edition, true, true)
     end
 end
