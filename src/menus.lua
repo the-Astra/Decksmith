@@ -176,7 +176,7 @@ Decksmith.customize_menu({
     automatic_preview = true,
     random_select = true,
     double_click_advance = false,
-    optional = function() return SMODS.RunSelect.Setup.choices.deck_choice == 'b_ds_custom' and tonumber(Decksmith.start_args.ds_joker_slots) and tonumber(Decksmith.start_args.ds_joker_slots) > 0 end,
+    optional = function() return SMODS.RunSelect.Setup.choices.deck_choice == 'b_ds_custom' and tonumber(Decksmith.start_args.ds_joker_slots) ~= 0 end,
     selection_limit = function() return tonumber(Decksmith.start_args.ds_joker_slots) or Decksmith.defaults.ds_joker_slots.reset end,
     generate_pool = function(self) return G.P_CENTER_POOLS.Joker end,
     selected_text = function(self, selection)
@@ -233,7 +233,7 @@ Decksmith.customize_menu({
     automatic_preview = true,
     random_select = true,
     double_click_advance = false,
-    optional = function() return SMODS.RunSelect.Setup.choices.deck_choice == 'b_ds_custom' and tonumber(Decksmith.start_args.ds_consumable_slots) and tonumber(Decksmith.start_args.ds_consumable_slots) > 0 end,
+    optional = function() return SMODS.RunSelect.Setup.choices.deck_choice == 'b_ds_custom' and tonumber(Decksmith.start_args.ds_consumable_slots) ~= 0 end,
     selection_limit = function() return tonumber(Decksmith.start_args.ds_consumable_slots) or Decksmith.defaults.ds_consumable_slots.reset end,
     generate_pool = function(self) return SMODS.merge_lists(Decksmith.get_consumable_pools()) end,
     selected_text = function(self, selection)
