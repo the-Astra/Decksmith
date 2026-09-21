@@ -14,24 +14,3 @@ payload = '''
 if args.key == '0' and G.CONTROLLER.text_input_hook.config.ref_table and G.CONTROLLER.text_input_hook.config.ref_table.ref_value == "setup_seed" then args.key = 'o' end
 '''
 match_indent = true
-
-[[patches]]
-[patches.pattern]
-target = "=[SMODS _ \"src/utils/run_select.lua\"]"
-pattern = '''
-for k, _ in pairs(to_add) do table.insert(temp, k) end
-'''
-position = 'at'
-payload = '''
-for k, v in pairs(to_add) do
-    if type(v) == 'number' then
-        for i = 1, v do
-            table.insert(temp, k) 
-        end
-    else
-        table.insert(temp, k) 
-    end
-end
-'''
-match_indent = true
-times = 1

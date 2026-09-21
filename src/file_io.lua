@@ -106,7 +106,10 @@ function Decksmith.serialize_entry(value)
     if type(value) == 'table' then
         built_string = '{ '
         for k, v in pairs(value) do
-            built_string = built_string .. tostring(k) .. ' = ' .. tostring(Decksmith.serialize_entry(v)) .. ', '
+            if type(k) ~= "number" then
+                built_string = built_string .. tostring(k) .. ' = '
+            end
+            built_string = built_string .. tostring(Decksmith.serialize_entry(v)) .. ', '
         end
         built_string = built_string .. '}'
     elseif type(value) == "string" and not tonumber(value) then

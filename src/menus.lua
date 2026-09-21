@@ -188,7 +188,7 @@ Decksmith.customize_menu({
             G.E_MANAGER:add_event(Event({
                 trigger = 'after', delay = 0.7,
                 func = function()
-                    local c = SMODS.add_card({key = v.key, skip_materialize = true})
+                    local c = SMODS.add_card({key = v.key, skip_materialize = true, edition = v.edition, no_edition = not v.edition})
                     c:start_materialize()
                     return true
                 end
@@ -198,14 +198,14 @@ Decksmith.customize_menu({
     create_selection_card = function(self, card_key, card_number, area)
         local card = Card(area.T.x, area.T.y, G.CARD_W, G.CARD_H, nil, G.P_CENTERS[card_key] or G.P_CENTERS.j_joker)
         card.ds_preview_card = self.key
-        card.index = card_number
+        card.index = #area.cards + 1
         if Decksmith.start_args.banned_keys and Decksmith.start_args.banned_keys[card_key] then
             card.debuff = true
         end
         return card
     end,
     handle_choice = function(self, choice, remove)
-        Decksmith.handle_duplicate_choices(self, choice, remove, Decksmith.start_args.ds_starting_jokers)
+        Decksmith.handle_duplicate_choices(self, choice, remove, 'ds_starting_jokers')
     end,
     choose_random = function(self)
         local choices = SMODS.RunSelect.Setup.choices[self.key] or {}
@@ -245,7 +245,7 @@ Decksmith.customize_menu({
             G.E_MANAGER:add_event(Event({
                 trigger = 'after', delay = 0.7,
                 func = function()
-                    local c = SMODS.add_card({key = v.key, skip_materialize = true})
+                    local c = SMODS.add_card({key = v.key, skip_materialize = true, edition = v.edition})
                     c:start_materialize()
                     return true
                 end
@@ -255,14 +255,14 @@ Decksmith.customize_menu({
     create_selection_card = function(self, card_key, card_number, area)
         local card = Card(area.T.x, area.T.y, G.CARD_W, G.CARD_H, nil, G.P_CENTERS[card_key] or G.P_CENTERS.c_strength)
         card.ds_preview_card = self.key
-        card.index = card_number
+        card.index = #area.cards + 1
         if Decksmith.start_args.banned_keys and Decksmith.start_args.banned_keys[card_key] then
             card.debuff = true
         end
         return card
     end,
     handle_choice = function(self, choice, remove)
-        Decksmith.handle_duplicate_choices(self, choice, remove, Decksmith.start_args.ds_starting_consumables)
+        Decksmith.handle_duplicate_choices(self, choice, remove, 'ds_starting_consumables')
     end,
     choose_random = function(self)
         local choices = SMODS.RunSelect.Setup.choices[self.key] or {}
