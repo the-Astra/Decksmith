@@ -400,6 +400,7 @@ Decksmith.customize_menu {
     key = 'export',
     ds_args = {
         'ds_name',
+        'ds_author'
     },
     definition = function(self)
         SMODS.RunSelect.Functions.build_preview_areas('deck_choice')
@@ -421,9 +422,9 @@ Decksmith.customize_menu {
                         }},
                         {n=G.UIT.C, config = {minh = 4, minw = 0.04, colour = G.C.L_BLACK}}, -- line
                         {n=G.UIT.C, config = {align = 'cm', padding = 0.05}, nodes = {
-                            {n=G.UIT.R, config = { align = 'cm', padding = 0.3}, nodes = { -- Text Input Node
-                                {n=G.UIT.R, config = {align = 'cm', padding = 0.1, minw = 3.8}, nodes = {
-                                    {n=G.UIT.T, config = {text = localize('k_ds_name_deck'), scale = 0.67, colour = G.C.WHITE}}
+                            {n=G.UIT.R, config = { align = 'cm', padding = 0.15}, nodes = { -- Deck Name Input Node
+                                {n=G.UIT.R, config = {align = 'cm', padding = 0.05, minw = 3.8}, nodes = {
+                                    {n=G.UIT.T, config = {text = localize('k_ds_name_deck'), scale = 0.53, colour = G.C.WHITE}}
                                 }},
                                 {n=G.UIT.R, config = { align = 'cm', padding = 0.1}, nodes = {
                                     {n=G.UIT.C, config = {align = 'cm'}, nodes = {
@@ -445,12 +446,36 @@ Decksmith.customize_menu {
                                     }}
                                 }},
                             }},
-                            { n = G.UIT.R, config = { align = "cm", minw = 2.5, padding = 0.4 }, nodes = { -- Save Deck Button
+                            {n=G.UIT.R, config = { align = 'cm', padding = 0.15}, nodes = { -- Author Input Node
+                                {n=G.UIT.R, config = {align = 'cm', padding = 0.05, minw = 3.8}, nodes = {
+                                    {n=G.UIT.T, config = {text = localize('k_ds_sign_deck'), scale = 0.53, colour = G.C.WHITE}}
+                                }},
+                                {n=G.UIT.R, config = { align = 'cm', padding = 0.1}, nodes = {
+                                    {n=G.UIT.C, config = {align = 'cm'}, nodes = {
+                                        create_text_input {
+                                            id = 'ds_author_input',
+                                            prompt_text = Decksmith.defaults['ds_author'].reset,
+                                            w = 2,
+                                            h = 1,
+                                            all_caps = false,
+                                            max_length = 60,
+                                            ref_table = Decksmith.start_args,
+                                            ref_value = 'ds_author',
+                                            extended_corpus = true
+                                        }
+                                    }},
+                                    {n=G.UIT.C, config = {align='cm'}, nodes = {
+                                        {n=G.UIT.C, config={minw = 0.2}},
+                                        Decksmith.create_value_button('reset', Decksmith.button_size, 'ds_author'),
+                                    }}
+                                }},
+                            }},
+                            { n = G.UIT.R, config = { align = "cm", minw = 2.5, padding = 0.1 }, nodes = { -- Save Deck Button
                                 { n = G.UIT.R, config = {  id = "ds_save_deck",align = "cm", padding = 0.3, no_fill = true, r = 0.1, hover = true, colour = G.C.GREEN, button = "ds_init_save_process", shadow = true, focus_args = { nav = "wide", button = "b" } }, nodes = {
                                     { n = G.UIT.T, config = { text = localize("k_ds_save_deck"), scale = 0.5, colour = G.C.UI.TEXT_LIGHT, shadow = true } },
                                 } },
                             } },
-                            { n = G.UIT.R, config = { align = "cm", minw = 2.5, padding = 0.4 }, nodes = { --Open Decks Folder Button
+                            { n = G.UIT.R, config = { align = "cm", minw = 2.5, padding = 0.1 }, nodes = { --Open Decks Folder Button
                                 { n = G.UIT.R, config = { id = "ds_open_folder", align = "cm", padding = 0.3, no_fill = true, r = 0.1, hover = true, colour = G.C.ORANGE, button = "ds_open_decks_folder", shadow = true, focus_args = { nav = "wide", button = "b" } }, nodes = {
                                     { n = G.UIT.T, config = { text = localize("k_ds_open_folder"), scale = 0.5, colour = G.C.UI.TEXT_LIGHT, shadow = true } },
                                 } },

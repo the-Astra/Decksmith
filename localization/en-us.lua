@@ -48,6 +48,7 @@ return {
             k_ds_pcard_rate = 'Playing Card Rate',
 
             k_ds_name_deck = 'Name Your Deck',
+            k_ds_sign_deck = 'Sign Your Deck',
 
             -- Title labels
             k_ds_import = 'IMPORT DECK',
@@ -117,6 +118,7 @@ return {
             a_ds_deck_count = '#1# DECKS',
             a_ds_preview_count = '#1#  #2#',
             a_ds_preview_count_missing = '#1#  #2# (#3# MISSING)',
+            a_ds_created_by = 'Created by: #1#'
         }
     }
 }

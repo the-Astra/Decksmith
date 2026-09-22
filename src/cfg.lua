@@ -70,5 +70,6 @@ Decksmith.defaults = {
     ds_pcard_rate = {reset = 0, min = 0, max = 50},
 
     -- Name
-    ds_name = {reset = "My New Deck"}
+    ds_name = {reset = "My New Deck"},
+    ds_author = {reset = "Unknown Author"},
 }

@@ -504,6 +504,7 @@ local function ds_import_file_button(filename, selected, file_info)
     local modified = file_info and file_info.modtime
     local date_text = type(modified) == 'number' and os.date('%Y-%m-%d', modified) or localize('k_ds_saved_deck_preset')
     local filedata = Decksmith.get_deck_data(filename)
+    local author_text = localize { type = 'variable', key = 'a_ds_created_by', vars = { filedata.ds_author or Decksmith.defaults.ds_author.reset } }
     local deck_name = filedata.ds_name or filename:gsub('%.jkr$', '')
     if string.len(deck_name) > 20 then
         deck_name = string.sub(deck_name, 1, 17) .. '...'
@@ -514,8 +515,9 @@ local function ds_import_file_button(filename, selected, file_info)
         r = 0.1, minw = 3.35, minh = 0.72, padding = 0.06
     }, nodes = {
         {n = G.UIT.C, config = {align = 'cl', minw = 2.55}, nodes = {
-            {n = G.UIT.R, config = {align = 'cl'}, nodes = {ds_import_text(deck_name, 0.31)}},
-            {n = G.UIT.R, config = {align = 'cl'}, nodes = {ds_import_text(date_text, 0.18, G.C.WHITE)}}
+            {n = G.UIT.R, config = {align = 'cl', padding = 0.05}, nodes = {ds_import_text(deck_name, 0.31)}},
+            {n = G.UIT.R, config = {align = 'cl', padding = 0.05}, nodes = {ds_import_text(author_text, 0.2)}},
+            {n = G.UIT.R, config = {align = 'cl', padding = 0.05}, nodes = {ds_import_text(date_text, 0.18, G.C.WHITE)}}
         }},
         {n = G.UIT.C, config = {align = 'cm', colour = selected and G.C.DARK_EDITION or G.C.BLACK,
             r = 0.08, minw = 0.58, minh = 0.38}, nodes = {ds_import_text('JKR', 0.19, G.C.GOLD)
@@ -579,13 +581,18 @@ local function ds_import_build_preview_nodes(state)
     if string.len(deck_name) > 45 then
         deck_name = string.sub(deck_name, 1, 42) .. '...'
     end
+    local author_name = localize { type = 'variable', key = 'a_ds_created_by', vars = { state.preview.ds_author or Decksmith.defaults.ds_author.reset } }
     local nodes = {{n = G.UIT.R, config = {align = 'cm', colour = G.C.BLUE, r = 0.1, minw = import_content_width, minh = 0.72, padding = 0.06}, nodes = {
         {n = G.UIT.C, config = {align = 'cl', minw = 4.7}, nodes = {
-            {n = G.UIT.R, config = {align = 'cl'}, nodes = {
+            {n = G.UIT.R, config = {align = 'cl', padding = 0.05}, nodes = {
                 {n = G.UIT.C, config = {minw = 0.12}},
                 ds_import_text(deck_name, 0.42, G.C.GOLD)
             }},
-            {n = G.UIT.R, config = {align = 'cl'}, nodes = {
+            {n = G.UIT.R, config = {align = 'cl', padding = 0.05}, nodes = {
+                {n = G.UIT.C, config = {minw = 0.12}},
+                ds_import_text(author_name, 0.27, G.C.GOLD)
+            }},
+            {n = G.UIT.R, config = {align = 'cl', padding = 0.05}, nodes = {
                 {n = G.UIT.C, config = {minw = 0.12}},
                 ds_import_text(localize('k_ds_full_deck_preview'), 0.18, G.C.WHITE)
             }}
