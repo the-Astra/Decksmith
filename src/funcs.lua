@@ -98,7 +98,7 @@ function Decksmith.create_menu_page(args)
     local options = {n=G.UIT.C, config = {align = 'cl'}, nodes = {}}
     Decksmith.this_page_random_options = {}
     Decksmith.this_page_reset_options = {}
-    
+
     for _, option in ipairs(args.options) do
         -- print(option)
         if option[2] and option[2].type then
@@ -106,15 +106,19 @@ function Decksmith.create_menu_page(args)
                 options.nodes[#options.nodes + 1] = Decksmith.text_input_element(option[1], option[2])
             elseif option[2].type == 'toggle' then
                 options.nodes[#options.nodes + 1] = Decksmith.toggle_element(option[1], option[2])
-            elseif option[2].type == 'button' then
-                options.nodes[#options.nodes + 1] = Decksmith.button_element(option[1], option[2])
+            -- elseif option[2].type == 'dropdown' then
+            --     options.nodes[#options.nodes + 1] = Decksmith.dropdown_element(option[1], option[2])
             end
         else
             options.nodes[#options.nodes + 1] = option[1] == 'spacer' and {n=G.UIT.R, config = {minh = 0.02, colour = G.C.L_BLACK}} or Decksmith.text_input_element(option[1], option[2])
         end
-    end                        
+    end
 
-    return 
+    if args.paginate then
+        
+    end
+
+    return
         {n = G.UIT.R, config = {align = 'cm'}, nodes = {
             deck_preview, -- can be moved to the right if preferred, I think it looks good on the left and helps make it clear that you are customising this deck in particular
             {n=G.UIT.C, config={minh = Decksmith.page_height, padding = 0.1}, nodes = {
@@ -277,18 +281,24 @@ end
 
 local preview_categories = {
     general = {title = 'k_ds_run_rules', colour = G.C.BLUE, order = 1},
-    money = {title = 'k_ds_economy', colour = G.C.GOLD, order = 2},
-    rates = {title = 'k_ds_shop_rates', colour = G.C.PURPLE, order = 3},
-    jokers = {title = 'k_ds_starting_jokers_title', colour = G.C.RED, order = 4},
-    consumables = {title = 'k_ds_starting_consumables_title', colour = G.C.PURPLE, order = 5},
-    vouchers = {title = 'k_ds_starting_vouchers_title', colour = G.C.ORANGE, order = 6},
-    modifiers = {title = 'k_ds_bans_modifiers', colour = G.C.FILTER, order = 7},
-    other = {title = 'k_ds_deck_info', colour = G.C.GREY, order = 8},
+    gameplay = {title = 'k_ds_gameplay_title', colour = G.C.ETERNAL, order = 2},
+    money = {title = 'k_ds_economy', colour = G.C.GOLD, order = 3},
+    rates = {title = 'k_ds_shop_rates', colour = G.C.PURPLE, order = 4},
+    jokers = {title = 'k_ds_starting_jokers_title', colour = G.C.RED, order = 5},
+    consumables = {title = 'k_ds_starting_consumables_title', colour = G.C.PURPLE, order = 6},
+    vouchers = {title = 'k_ds_starting_vouchers_title', colour = G.C.ORANGE, order = 7},
+    modifiers = {title = 'k_ds_bans_modifiers', colour = G.C.FILTER, order = 8},
+    other = {title = 'k_ds_deck_info', colour = G.C.GREY, order = 9},
 }
 
 local general_keys = {
     ds_joker_slots = true, ds_consumable_slots = true, ds_shop_slots = true,
+    ds_boosters_in_shop = true, ds_vouchers_in_shop = true,
     ds_winning_ante = true, ds_ante_scaling = true
+}
+local gameplay_keys = {
+    ds_hand_size = true, ds_hands = true, ds_discards = true,
+    ds_play_limit = true, ds_discard_limit = true
 }
 local money_keys = {
     ds_starting_dollars = true, ds_interest_amount = true, ds_interest_cap = true,
@@ -302,6 +312,7 @@ local rate_keys = {
 
 local function ds_import_category(key)
     if general_keys[key] then return 'general' end
+    if gameplay_keys[key] then return 'gameplay' end
     if money_keys[key] then return 'money' end
     if rate_keys[key] then return 'rates' end
     if key == 'ds_starting_jokers' then return 'jokers' end
@@ -313,7 +324,8 @@ end
 
 local function ds_import_build_rows(settings)
     local row_blacklist = {
-        ds_name = true
+        ds_name = true,
+        ds_author = true
     }
     local grouped, rows = {}, {}
     for key, value in pairs(settings) do
@@ -439,13 +451,18 @@ local function ds_import_card_area(title, values, colour)
     if type(values) ~= 'table' or not next(values) then return nil end
     local count = 0
     for _, amount in pairs(values) do count = count + (type(amount) == 'number' and amount or 1) end
-    local area = CardArea(G.ROOM.T.w, G.ROOM.T.h, import_card_area_width, G.CARD_H * 0.56, {card_limit = math.max(1, count), type = 'title_2', highlight_limit = 0, deck_height = 0.55, thin_draw = 1})
+    local area = CardArea(G.ROOM.T.w, G.ROOM.T.h, import_card_area_width, G.CARD_H * 0.52, {card_limit = math.max(1, count), type = 'title_2', highlight_limit = 0, deck_height = 0.55, thin_draw = 1})
     area.draw = ds_import_draw_card_area
     Decksmith.import_card_areas = Decksmith.import_card_areas or {}
     Decksmith.import_card_areas[#Decksmith.import_card_areas + 1] = area
 
     local prototypes = {}
-    for _, v in pairs(values) do prototypes[#prototypes + 1] = v end
+    for k, v in pairs(values) do
+        if type(v) == 'boolean' then
+            v = { key = tostring(k) }
+        end
+        prototypes[#prototypes + 1] = v
+    end
     local missing = 0
     for _, v in ipairs(prototypes) do
         local amount = type(values[v.key]) == 'number' and values[v.key] or 1
@@ -472,7 +489,7 @@ local function ds_import_card_area(title, values, colour)
     }
     return {n = G.UIT.R, config = {align = 'cm', colour = G.C.L_BLACK, r = 0.07, minw = import_content_width, padding = 0.035}, nodes = {
         {n = G.UIT.C, config = {align = 'cl', minw = 1.35}, nodes = {
-            {n = G.UIT.R, config = {align = 'cm', colour = colour, r = 0.06, minw = 1.25, minh = 0.56}, nodes = {
+            {n = G.UIT.R, config = {align = 'cm', colour = colour, r = 0.06, minw = 1.25, minh = 0.52}, nodes = {
                 ds_import_text(heading, 0.2, G.C.WHITE)
             }}
         }},
@@ -487,14 +504,18 @@ local function ds_import_build_card_nodes(settings)
     settings = settings or {}
     local nodes = {}
     local specs = {
-        {localize('k_ds_jokers'), settings.ds_starting_jokers, G.C.RED}, {localize('k_ds_consumables'), settings.ds_starting_consumables, G.C.PURPLE},
+        {localize('k_ds_jokers'), settings.ds_starting_jokers, G.C.RED},
+        {localize('k_ds_consumables'), settings.ds_starting_consumables, G.C.PURPLE},
         {localize('k_ds_vouchers'), settings.ds_starting_vouchers, G.C.ORANGE}
     }
     for _, spec in ipairs(specs) do
-        local node = ds_import_card_area(spec[1], spec[2], spec[3])
-        if node then
-            nodes[#nodes + 1] = node
-            nodes[#nodes + 1] = {n = G.UIT.R, config = {minh = 0.06}}
+        if spec[2] ~= {} then  
+            local node = ds_import_card_area(spec[1], spec[2], spec[3])
+            if node then
+                Decksmith.settings_height = math.max(Decksmith.settings_height - (G.CARD_H * 0.555), 1)
+                nodes[#nodes + 1] = node
+                nodes[#nodes + 1] = {n = G.UIT.R, config = {minh = 0.06}}
+            end
         end
     end
     return nodes
@@ -591,18 +612,15 @@ local function ds_import_build_preview_nodes(state)
             {n = G.UIT.R, config = {align = 'cl', padding = 0.05}, nodes = {
                 {n = G.UIT.C, config = {minw = 0.12}},
                 ds_import_text(author_name, 0.27, G.C.GOLD)
-            }},
-            {n = G.UIT.R, config = {align = 'cl', padding = 0.05}, nodes = {
-                {n = G.UIT.C, config = {minw = 0.12}},
-                ds_import_text(localize('k_ds_full_deck_preview'), 0.18, G.C.WHITE)
             }}
         }},
         {n = G.UIT.C, config = {align = 'cm', colour = G.C.GREEN, r = 0.08, minw = 1.65, minh = 0.46, button = 'ds_import_load', hover = true, shadow = true}, nodes = {
             ds_import_text(localize('k_ds_load_deck'), 0.23)
         }}
     }}}
+    Decksmith.settings_height = 1.45 + ((G.CARD_H * 0.555) * 3)
     for _, node in ipairs(ds_import_build_card_nodes(state.preview)) do nodes[#nodes + 1] = node end
-    nodes[#nodes + 1] = ds_import_scrollbox(ds_import_build_setting_nodes(state.rows), 6.05, 1.45)
+    nodes[#nodes + 1] = ds_import_scrollbox(ds_import_build_setting_nodes(state.rows), 6.05, Decksmith.settings_height)
     return nodes
 end
 
