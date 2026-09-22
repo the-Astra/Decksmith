@@ -772,3 +772,33 @@ function Decksmith.apply_card_modifications(card, args)
         card:set_edition(args.edition, true, true)
     end
 end
+
+function Decksmith.get_modifier_info()
+    return {
+        {key = 'ds_modifier_anaglyph'},
+        {key = 'ds_modifier_plasma'},
+        {key = 'ds_modifier_joker_every_ante'}
+    }
+end
+
+function Decksmith.modifer_starting_params(params)
+    -- General settings
+    params.ante_scaling = tonumber(Decksmith.start_args.ds_ante_scaling) or params.ante_scaling
+    params.joker_slots = tonumber(Decksmith.start_args.ds_joker_slots) or params.joker_slots
+    params.consumable_slots = tonumber(Decksmith.start_args.ds_consumable_slots) or params.consumable_slots
+    params.boosters_in_shop = tonumber(Decksmith.start_args.ds_boosters_in_shop) or params.boosters_in_shop
+    params.vouchers_in_shop = tonumber(Decksmith.start_args.ds_vouchers_in_shop) or params.vouchers_in_shop
+
+    -- Gameplay Settings
+    params.hand_size = tonumber(Decksmith.start_args.ds_hand_size) or params.hand_size
+    params.hands = tonumber(Decksmith.start_args.ds_hands) or params.hands
+    params.discards = tonumber(Decksmith.start_args.ds_discards) or params.discards
+    params.play_limit = tonumber(Decksmith.start_args.ds_play_limit) or params.play_limit
+    params.discard_limit = tonumber(Decksmith.start_args.ds_discard_limit) or params.discard_limit
+
+    -- Money settings
+    params.dollars = tonumber(Decksmith.start_args.ds_starting_dollars) or params.dollars
+    params.reroll_cost = tonumber(Decksmith.start_args.ds_reroll_cost) or params.reroll_cost
+
+    return params
+end

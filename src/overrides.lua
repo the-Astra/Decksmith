@@ -41,3 +41,8 @@ function SMODS.RunSelect.Functions.populate_preview_ui(key, to_add, silent, _rem
         populate_preview_ref(key, to_add, silent, _remove)
     end
 end
+
+local get_starting_params_ref = get_starting_params
+function get_starting_params()
+    return Decksmith.modifer_starting_params(get_starting_params_ref())
+end

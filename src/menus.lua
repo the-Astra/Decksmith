@@ -31,6 +31,8 @@ Decksmith.customize_menu {
         'ds_joker_slots',
         'ds_consumable_slots',
         'ds_shop_slots',
+        'ds_boosters_in_shop',
+        'ds_vouchers_in_shop',
         'ds_winning_ante',
         'ds_ante_scaling',
     },
@@ -42,6 +44,8 @@ Decksmith.customize_menu {
                 {'ds_joker_slots'},
                 {'ds_consumable_slots'},
                 {'ds_shop_slots'},
+                {'ds_boosters_in_shop'},
+                {'ds_vouchers_in_shop'},
                 {'spacer'},
                 {'ds_winning_ante'},
                 {'ds_ante_scaling'}
@@ -49,25 +53,7 @@ Decksmith.customize_menu {
         })
     end,
     start_run = function(self, choice)
-        -- Ante stuff
-        G.GAME.starting_params.ante_scaling = tonumber(Decksmith.start_args.ds_ante_scaling) or G.GAME.starting_params.ante_scaling
         G.GAME.win_ante = tonumber(Decksmith.start_args.ds_winning_ante) and to_big(tonumber(Decksmith.start_args.ds_winning_ante)) or G.GAME.win_ante
-
-        local joker_slots = tonumber(Decksmith.start_args.ds_joker_slots)
-        if joker_slots and G.jokers then
-            G.jokers.config.card_limits.base = joker_slots
-            G.jokers.config.card_limits.mod = 0
-            G.jokers:handle_card_limit()
-            G.GAME.starting_params.joker_slots = joker_slots
-        end
-
-        local consumable_slots = tonumber(Decksmith.start_args.ds_consumable_slots)
-        if consumable_slots and G.consumeables then
-            G.consumeables.config.card_limits.base = consumable_slots
-            G.consumeables.config.card_limits.mod = 0
-            G.consumeables:handle_card_limit()
-            G.GAME.starting_params.consumable_slots = consumable_slots
-        end
 
         G.E_MANAGER:add_event(Event({
             func = function()
@@ -84,6 +70,29 @@ Decksmith.customize_menu {
                 G.GAME.banned_keys[k] = true
             end
         end
+    end,
+}
+
+Decksmith.customize_menu {
+    key = 'gameplay',
+    ds_args = {
+        'ds_hand_size',
+        'ds_hands',
+        'ds_discards',
+        'ds_play_limit',
+        'ds_discard_limit',
+    },
+    definition = function(self)
+        return Decksmith.create_menu_page({
+            key = 'k_ds_gameplay',
+            options = {
+                {'ds_hand_size'},
+                {'ds_hands'},
+                {'ds_discards'},
+                {'ds_play_limit'},
+                {'ds_discard_limit'}
+            }
+        })
     end,
 }
 
@@ -115,16 +124,8 @@ Decksmith.customize_menu {
                 {'ds_discount_percentage'}
             }
         })
-        
     end,
     start_run = function(self, choice)
-        G.GAME.dollars = tonumber(Decksmith.start_args.ds_starting_dollars) or G.GAME.dollars
-
-        -- Why are there three values for this?
-        G.GAME.base_reroll_cost = tonumber(Decksmith.start_args.ds_reroll_cost) or G.GAME.base_reroll_cost
-        G.GAME.round_resets.base_reroll_cost = tonumber(Decksmith.start_args.ds_reroll_cost) or G.GAME.round_resets.base_reroll_cost
-        G.GAME.current_round.base_reroll_cost = tonumber(Decksmith.start_args.ds_reroll_cost) or G.GAME.current_round.base_reroll_cost
-
         G.GAME.modifiers.money_per_hand = tonumber(Decksmith.start_args.ds_dollars_per_hand) or G.GAME.modifiers.money_per_hand
         G.GAME.modifiers.money_per_discard = tonumber(Decksmith.start_args.ds_dollars_per_discard) or G.GAME.modifiers.money_per_discard
 
@@ -382,19 +383,26 @@ Decksmith.customize_menu({
     end,
 })
 
---[[ Decksmith.customize_menu {
-    key = 'modifiers',
-    definition = function(self)
-        return Decksmith.create_menu_page({
-            key = 'k_ds_modifiers',
-            no_reset = true,
-            no_random = true,
-            options = {
+-- Decksmith.customize_menu {
+--     key = 'modifiers',
+--     definition = function(self)
+--         return Decksmith.create_menu_page({
+--             key = 'k_ds_modifiers',
+--             no_reset = true,
+--             no_random = true,
+--             options = {
                 
-            }
-        })
-    end,
-} ]]
+--             }
+--         })
+--     end,
+--     set_default = function(self, choice)
+--         local modifier_info = Decksmith.get_modifier_info()
+--         for _, v in pairs(modifier_info) do
+--             Decksmith.start_args[v.key] = Decksmith.start_args[v.key] or ''
+--         end
+--         return nil
+--     end
+-- }
 
 Decksmith.customize_menu {
     key = 'export',

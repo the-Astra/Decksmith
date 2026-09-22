@@ -29,8 +29,16 @@ return {
             k_ds_joker_slots = 'Joker Slots',
             k_ds_consumable_slots = 'Consumable Slots',
             k_ds_shop_slots = 'Shop Slots',
+            k_ds_boosters_in_shop = 'Boosters In Shop',
+            k_ds_vouchers_in_shop = 'Vouchers In Shop',
             k_ds_ante_scaling = 'Ante Scaling',
             k_ds_winning_ante = 'Winning Ante',
+
+            k_ds_hand_size = 'Hand Size',
+            k_ds_hands = 'Hands',
+            k_ds_discards = 'Discards',
+            k_ds_play_limit = 'Play Limit',
+            k_ds_discard_limit = 'Discard Limit',
 
             k_ds_starting_dollars = 'Starting Dollars',
             k_ds_reroll_cost = 'Reroll Cost',
@@ -53,6 +61,7 @@ return {
             -- Title labels
             k_ds_import = 'IMPORT DECK',
             k_ds_general = 'GENERAL',
+            k_ds_gameplay = 'GAMEPLAY',
             k_ds_money = 'MONEY',
             k_ds_rates = 'RATES',
             k_ds_MODIFIERS = 'MODIFIERS',
@@ -86,6 +95,7 @@ return {
             -- Run Select
             run_select_ds_import = 'Import',
             run_select_ds_general = 'General',
+            run_select_ds_gameplay = 'Gameplay',
             run_select_ds_money = 'Money',
             run_select_ds_rates = 'Rates',
             run_select_ds_starting_jokers = 'Jokers',

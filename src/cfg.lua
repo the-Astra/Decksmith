@@ -49,8 +49,17 @@ Decksmith.defaults = {
     ds_joker_slots = {reset = 5, min = 1, max = 25},
     ds_consumable_slots = {reset = 2, min = 1, max = 25},
     ds_shop_slots = {reset = 2, min = 1, max = 25},
+    ds_boosters_in_shop = {reset = 2, min = 1, max = 4},
+    ds_vouchers_in_shop = {reset = 1, min = 1, max = 3},
     ds_winning_ante = {reset = 8, min = 1, max = 38},
     ds_ante_scaling = {reset = 1, min = 1, max = 15},
+
+    -- Gameplay
+    ds_hand_size = {reset = 8, min = 1, max = 16},
+    ds_hands = {reset = 4, min = 1, max = 8},
+    ds_discards = {reset = 3, min = 1, max = 8},
+    ds_play_limit = {reset = 5, min = 1, max = 8},
+    ds_discard_limit = {reset = 5, min = 1, max = 8},
 
     -- Money
     ds_starting_dollars = {reset = 4, min = 0, max = 150},
