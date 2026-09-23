@@ -849,6 +849,28 @@ function Decksmith.get_ctype_rate_info()
     return ctypes
 end
 
+function Decksmith.get_rarity_rate_info()
+    local rarities = {}
+
+    for _, v in pairs(SMODS.Rarities) do
+        local key = string.lower(v.key)
+        table.insert(rarities, {
+            key = 'ds_' .. key .. '_rate',
+            original_key = key,
+            default_weight = v.default_weight,
+            args = {
+                label = localize('k_'..key),
+                prompt_text = v.default_weight and tostring(v.default_weight) or Decksmith.defaults['ds_' .. key .. '_rate'] and Decksmith.defaults['ds_' .. key .. '_rate'].reset or 1,
+                no_random = not Decksmith.defaults['ds_' .. key .. '_rate'] or not Decksmith.defaults['ds_' .. key .. '_rate'].min and Decksmith.defaults['ds_' .. key .. '_rate'].max,
+                no_reset = not Decksmith.defaults['ds_' .. key .. '_rate'] or not Decksmith.defaults['ds_' .. key .. '_rate'].reset
+            }
+        })
+    end
+    table.sort(rarities, function(a, b) return a.default_weight > b.default_weight end)
+
+    return rarities
+end
+
 function Decksmith.get_modifier_info()
     return {
         {key = 'ds_modifier_anaglyph', args = {type = 'toggle', no_random = true, no_reset = true}},

@@ -85,5 +85,6 @@ Decksmith.defaults = {
 
 Decksmith.pages = {
     ds_rates = 1,
+    ds_rarities = 1,
     ds_modifiers = 1
 }
