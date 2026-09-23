@@ -225,6 +225,7 @@ Decksmith.customize_menu { -- Rarities
 
         return Decksmith.create_menu_page({
             key = 'k_ds_rarities',
+            no_random = true,
             paginate = {
                 options = page_text,
                 ref_value = 'ds_rarities'
@@ -233,19 +234,53 @@ Decksmith.customize_menu { -- Rarities
         })
     end,
     start_run = function(self, choice)
-        G.E_MANAGER:add_event(Event({
-            func = function()
-                for _, v in pairs(Decksmith.get_rarity_rate_info()) do
-                    local new_mod = G.GAME[v.original_key .. '_mod']
-                    if tonumber(Decksmith.start_args[v.key]) then
-                        new_mod = Decksmith.start_args[v.key] / v.default_weight
-                    end
-                    G.GAME[v.original_key .. '_mod'] = new_mod
-                end
-                return true;
+        for _, v in pairs(Decksmith.get_rarity_rate_info()) do
+            local new_mod = G.GAME[v.original_key .. '_mod']
+            if new_mod and tonumber(Decksmith.start_args[v.key]) then
+                new_mod = Decksmith.start_args[v.key] / v.default_weight
             end
-        }))
+            G.GAME[v.original_key .. '_mod'] = new_mod
+        end
+        return true;
+    end
+}
+
+Decksmith.customize_menu { -- Modifiers
+    key = 'modifiers',
+    definition = function(self)
+        local modifiers = Decksmith.get_modifier_info()
+        local max_per_page = 5
+        local total_pages = math.ceil(#modifiers / max_per_page)
+
+        local page_text = {}
+        for i = 1, total_pages do
+            table.insert(page_text, localize('k_page')..' '..i..' / '..total_pages)
+        end
+
+        local options = {}
+        local starting_index = 1 + ((Decksmith.pages.ds_modifiers - 1) * max_per_page)
+        for i = starting_index, math.min(starting_index + (max_per_page - 1), #modifiers) do
+            table.insert(options, {modifiers[i].key, modifiers[i].args})
+        end
+
+        return Decksmith.create_menu_page({
+            key = 'k_ds_modifiers',
+            no_reset = true,
+            no_random = true,
+            paginate = {
+                options = page_text,
+                ref_value = 'ds_modifiers'
+            },
+            options = options
+        })
     end,
+    set_default = function(self, choice)
+        local modifier_info = Decksmith.get_modifier_info()
+        for _, v in pairs(modifier_info) do
+            Decksmith.start_args[v.key] = Decksmith.start_args[v.key]
+        end
+        return nil
+    end
 }
 
 Decksmith.customize_menu({ -- Jokers
@@ -458,44 +493,6 @@ Decksmith.customize_menu({ -- Vouchers
         return Decksmith.start_args.ds_starting_vouchers
     end,
 })
-
-Decksmith.customize_menu { -- Modifiers
-    key = 'modifiers',
-    definition = function(self)
-        local modifiers = Decksmith.get_modifier_info()
-        local max_per_page = 5
-        local total_pages = math.ceil(#modifiers / max_per_page)
-
-        local page_text = {}
-        for i = 1, total_pages do
-            table.insert(page_text, localize('k_page')..' '..i..' / '..total_pages)
-        end
-
-        local options = {}
-        local starting_index = 1 + ((Decksmith.pages.ds_modifiers - 1) * max_per_page)
-        for i = starting_index, math.min(starting_index + (max_per_page - 1), #modifiers) do
-            table.insert(options, {modifiers[i].key, modifiers[i].args})
-        end
-
-        return Decksmith.create_menu_page({
-            key = 'k_ds_modifiers',
-            no_reset = true,
-            no_random = true,
-            paginate = {
-                options = page_text,
-                ref_value = 'ds_modifiers'
-            },
-            options = options
-        })
-    end,
-    set_default = function(self, choice)
-        local modifier_info = Decksmith.get_modifier_info()
-        for _, v in pairs(modifier_info) do
-            Decksmith.start_args[v.key] = Decksmith.start_args[v.key]
-        end
-        return nil
-    end
-}
 
 Decksmith.customize_menu { -- Export
     key = 'export',

@@ -78,6 +78,12 @@ Decksmith.defaults = {
     ds_spectral_rate = {reset = 0, min = 0, max = 50},
     ds_pcard_rate = {reset = 0, min = 0, max = 50},
 
+    -- Rarities
+    ds_common_rate = {reset = 0.7},
+    ds_uncommon_rate = {reset = 0.25},
+    ds_rare_rate = {reset = 0.05},
+    ds_legendary_rate = {reset = 0},
+
     -- Name
     ds_name = {reset = "My New Deck"},
     ds_author = {reset = "Unknown Author"},
