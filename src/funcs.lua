@@ -32,7 +32,7 @@ function Decksmith.text_input_element(value, args)
             {n=G.UIT.C, config = {align = 'cm'}, nodes = {
                 create_text_input {
                     id = value .. '_input',
-                    prompt_text = Decksmith.defaults[value].reset .. '',
+                    prompt_text = args.prompt_text or Decksmith.defaults[value].reset .. '',
                     w = args.w or 1.5,
                     h = args.h or 0.5,
                     all_caps = args.all_caps or false,
@@ -827,6 +827,26 @@ function Decksmith.apply_card_modifications(card, args)
     if args.edition then
         card:set_edition(args.edition, true, true)
     end
+end
+
+function Decksmith.get_ctype_rate_info()
+    local ctypes = {}
+
+    for _, v in pairs(SMODS.ConsumableTypes) do
+        local key = string.lower(v.key)
+        table.insert(ctypes, { 
+            key = 'ds_' .. key .. '_rate',
+            original_key = key,
+            args = {
+                label = localize('k_'..key),
+                prompt_text = v.shop_rate and tostring(v.shop_rate) or Decksmith.defaults['ds_' .. key .. '_rate'] and Decksmith.defaults['ds_' .. key .. '_rate'].reset or 0,
+                no_random = not Decksmith.defaults['ds_' .. key .. '_rate'] or not Decksmith.defaults['ds_' .. key .. '_rate'].min and Decksmith.defaults['ds_' .. key .. '_rate'].max,
+                no_reset = not Decksmith.defaults['ds_' .. key .. '_rate'] or not Decksmith.defaults['ds_' .. key .. '_rate'].reset
+            }
+        })
+    end
+
+    return ctypes
 end
 
 function Decksmith.get_modifier_info()

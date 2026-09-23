@@ -3,7 +3,13 @@ Decksmith.customize_menu = SMODS.RunSelectPage:extend {
     optional = function() return SMODS.RunSelect.Setup.choices.deck_choice == 'b_ds_custom' end,
     set_default = function(self, choice)
         if self.ds_args then
-            for _, v in pairs(self.ds_args) do
+            local args
+            if type(self.ds_args) == "function" then
+                args = self:ds_args()
+            else
+                args = self.ds_args
+            end
+            for _, v in pairs(args) do
                 Decksmith.start_args[v] = Decksmith.start_args[v] or ''
             end
         end
@@ -11,7 +17,7 @@ Decksmith.customize_menu = SMODS.RunSelectPage:extend {
     end
 }
 
-Decksmith.customize_menu {
+Decksmith.customize_menu { -- Import
     key = 'import',
     optional = function() return SMODS.RunSelect.Setup.choices.deck_choice == 'b_ds_custom' and next(Decksmith.get_valid_deck_names()) ~= nil end,
     definition = function(self)
@@ -25,7 +31,7 @@ Decksmith.customize_menu {
     end,
 }
 
-Decksmith.customize_menu {
+Decksmith.customize_menu { -- General
     key = 'general',
     ds_args = {
         'ds_joker_slots',
@@ -73,7 +79,7 @@ Decksmith.customize_menu {
     end,
 }
 
-Decksmith.customize_menu {
+Decksmith.customize_menu { -- Gameplay
     key = 'gameplay',
     ds_args = {
         'ds_hand_size',
@@ -96,7 +102,7 @@ Decksmith.customize_menu {
     end,
 }
 
-Decksmith.customize_menu {
+Decksmith.customize_menu { -- Money
     key = 'money',
     ds_args = {
         'ds_starting_dollars',
@@ -137,42 +143,57 @@ Decksmith.customize_menu {
     end,
 }
 
-Decksmith.customize_menu {
+Decksmith.customize_menu { -- Rates
     key = 'rates',
-    ds_args = {
-        'ds_joker_rate',
-        'ds_tarot_rate',
-        'ds_planet_rate',
-        'ds_spectral_rate',
-        'ds_pcard_rate',
-    },
+    ds_args = function(self)
+        local rate_keys = { 'ds_joker_rate', 'ds_pcard_rate' }
+        
+        for _, v in pairs(Decksmith.get_ctype_rate_info()) do
+            table.insert(rate_keys, v.key)
+        end
+
+        return rate_keys
+    end,
     definition = function(self)
+        local rates = { {key = 'ds_joker_rate'}, {key = 'ds_pcard_rate'} }
+        for _, v in pairs(Decksmith.get_ctype_rate_info()) do
+            table.insert(rates, v)
+        end
+        local max_per_page = 7
+        local total_pages = math.ceil(#rates / max_per_page)
+
+        local page_text = {}
+        for i = 1, total_pages do
+            table.insert(page_text, localize('k_page')..' '..i..' / '..total_pages)
+        end
+
+        local options = {}
+        local starting_index = 1 + ((Decksmith.pages.ds_rates - 1) * max_per_page)
+        for i = starting_index, math.min(starting_index + (max_per_page - 1), #rates) do
+            table.insert(options, {rates[i].key, rates[i].args})
+        end
+
         return Decksmith.create_menu_page({
             key = 'k_ds_rates',
-            -- no_random = true, -- EXAMPLE
-            options = {
-                {'ds_joker_rate'},
-                {'ds_tarot_rate'},
-                {'ds_planet_rate'},
-                {'ds_spectral_rate'},
-                {'ds_pcard_rate'}
-            }
+            paginate = {
+                options = page_text,
+                ref_value = 'ds_rates'
+            },
+            options = options
         })
     end,
     start_run = function(self, choice)
         G.GAME.joker_rate = tonumber(Decksmith.start_args.ds_joker_rate) or G.GAME.joker_rate
 
-        G.GAME.tarot_rate = tonumber(Decksmith.start_args.ds_tarot_rate) or G.GAME.tarot_rate
-
-        G.GAME.planet_rate = tonumber(Decksmith.start_args.ds_planet_rate) or G.GAME.planet_rate
-
-        G.GAME.spectral_rate = tonumber(Decksmith.start_args.ds_spectral_rate)or G.GAME.spectral_rate
-
         G.GAME.playing_card_rate = tonumber(Decksmith.start_args.ds_pcard_rate) or G.GAME.playing_card_rate
+
+        for _, v in pairs(Decksmith.get_ctype_rate_info()) do
+            G.GAME[v.original_key] = tonumber(Decksmith.start_args[v.key]) or G.GAME[v.original_key]
+        end
     end,
 }
 
-Decksmith.customize_menu({
+Decksmith.customize_menu({ -- Jokers
     key = 'starting_jokers',
     automatic_preview = true,
     random_select = true,
@@ -229,7 +250,7 @@ Decksmith.customize_menu({
     end,
 })
 
-Decksmith.customize_menu({
+Decksmith.customize_menu({ -- Consumables
     key = 'starting_consumables',
     automatic_preview = true,
     random_select = true,
@@ -286,7 +307,7 @@ Decksmith.customize_menu({
     end,
 })
 
-Decksmith.customize_menu({
+Decksmith.customize_menu({ -- Vouchers
     key = 'starting_vouchers',
     grid_size = {2, 2},
     automatic_preview = true,
@@ -383,7 +404,7 @@ Decksmith.customize_menu({
     end,
 })
 
-Decksmith.customize_menu {
+Decksmith.customize_menu { -- Modifiers
     key = 'modifiers',
     definition = function(self)
         local modifiers = Decksmith.get_modifier_info()
@@ -421,7 +442,7 @@ Decksmith.customize_menu {
     end
 }
 
-Decksmith.customize_menu {
+Decksmith.customize_menu { -- Export
     key = 'export',
     ds_args = {
         'ds_name',

@@ -49,11 +49,8 @@ return {
             k_ds_discount_percentage = 'Discount Percentage',
             k_ds_discard_cost = 'Discard Cost',
 
-            k_ds_joker_rate = 'Joker Rate',
-            k_ds_tarot_rate = 'Tarot Rate',
-            k_ds_planet_rate = 'Planet Rate',
-            k_ds_spectral_rate = 'Spectral Rate',
-            k_ds_pcard_rate = 'Playing Card Rate',
+            k_ds_joker_rate = 'Jokers',
+            k_ds_pcard_rate = 'Playing Cards',
 
             k_ds_modifier_anaglyph = '+1 Double Tag after Boss',
             k_ds_modifier_plasma = 'Balance Chips and Mult',
