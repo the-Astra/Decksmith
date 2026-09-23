@@ -12,6 +12,20 @@ function Decksmith.text_input_element(value, args)
         table.insert(label_nodes, {n=G.UIT.R, config = {align = 'cm'}, nodes = {{n=G.UIT.T, config = {text = v, scale = args.label_size or 0.37, colour = args.label_colour or G.C.WHITE}}}})
     end
 
+    local button_nodes = {}
+    if not args.no_random or not args.no_reset then
+        table.insert(button_nodes, {n=G.UIT.C, config={minw = 0.2}})
+    end
+    if not args.no_random then
+        table.insert(button_nodes, Decksmith.create_value_button('random', Decksmith.button_size/1.5, value))
+    end
+    if not args.no_random and not args.no_reset then
+        table.insert(button_nodes, {n=G.UIT.C, config={minw = 0.1}})
+    end
+    if not args.no_reset then
+        table.insert(button_nodes, Decksmith.create_value_button('reset', Decksmith.button_size/1.5, value))
+    end
+
     local t = {
         n=G.UIT.R, config = { align = 'cr', padding = 0.1}, nodes = {
             {n=G.UIT.C, config = {align = 'cl', padding = 0.1, minw = 3.8}, nodes = label_nodes},
@@ -29,12 +43,7 @@ function Decksmith.text_input_element(value, args)
                     extended_corpus = true
                 }
             }},
-            {n=G.UIT.C, config = {align='cm'}, nodes = {
-                {n=G.UIT.C, config={minw = 0.2}},
-                Decksmith.create_value_button(not args.no_random and 'random', Decksmith.button_size/1.5, value),
-                {n=G.UIT.C, config={minw = 0.1}},
-                Decksmith.create_value_button(not args.no_reset and 'reset', Decksmith.button_size/1.5, value),
-            }}
+            {n=G.UIT.C, config = {align='cm'}, nodes = button_nodes }
         }
     }
 
@@ -56,6 +65,20 @@ function Decksmith.toggle_element(value, args)
         table.insert(label_nodes, {n=G.UIT.R, config = {align = 'cm'}, nodes = {{n=G.UIT.T, config = {text = v, scale = args.label_size or 0.37, colour = args.label_colour or G.C.WHITE}}}})
     end
 
+    local button_nodes = {}
+    if not args.no_random or not args.no_reset then
+        table.insert(button_nodes, {n=G.UIT.C, config={minw = 0.2}})
+    end
+    if not args.no_random then
+        table.insert(button_nodes, Decksmith.create_value_button('random', Decksmith.button_size/1.5, value))
+    end
+    if not args.no_random and not args.no_reset then
+        table.insert(button_nodes, {n=G.UIT.C, config={minw = 0.1}})
+    end
+    if not args.no_reset then
+        table.insert(button_nodes, Decksmith.create_value_button('reset', Decksmith.button_size/1.5, value))
+    end
+
     local t = {
         n=G.UIT.R, config = { align = 'cr', padding = 0.1}, nodes = {
             {n=G.UIT.C, config = {align = 'cl', padding = 0.1, minw = 3.8}, nodes = label_nodes},
@@ -73,12 +96,7 @@ function Decksmith.toggle_element(value, args)
                     shadow = true,
                 }
             }},
-            {n=G.UIT.C, config = {align='cm'}, nodes = {
-                {n=G.UIT.C, config={minw = 0.2}},
-                Decksmith.create_value_button(not args.no_random and 'random', Decksmith.button_size/1.5, value),
-                {n=G.UIT.C, config={minw = 0.1}},
-                Decksmith.create_value_button(not args.no_reset and 'reset', Decksmith.button_size/1.5, value),
-            }}
+            {n=G.UIT.C, config = {align='cm'}, nodes = button_nodes }
         }
     }
 

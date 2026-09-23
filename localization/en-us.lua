@@ -57,6 +57,7 @@ return {
 
             k_ds_modifier_anaglyph = '+1 Double Tag after Boss',
             k_ds_modifier_plasma = 'Balance Chips and Mult',
+            k_ds_modifier_joker_every_ante = 'Spawn a Joker every ante',
 
             k_ds_name_deck = 'Name Your Deck',
             k_ds_sign_deck = 'Sign Your Deck',
