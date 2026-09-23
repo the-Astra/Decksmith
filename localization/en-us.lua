@@ -55,6 +55,9 @@ return {
             k_ds_spectral_rate = 'Spectral Rate',
             k_ds_pcard_rate = 'Playing Card Rate',
 
+            k_ds_modifier_anaglyph = '+1 Double Tag after Boss',
+            k_ds_modifier_plasma = 'Balance Chips and Mult',
+
             k_ds_name_deck = 'Name Your Deck',
             k_ds_sign_deck = 'Sign Your Deck',
 

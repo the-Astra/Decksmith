@@ -115,7 +115,21 @@ function Decksmith.create_menu_page(args)
     end
 
     if args.paginate then
-        
+        options.nodes[#options.nodes + 1] = {
+            n = G.UIT.R, config = {align = 'bm', padding = 0, minh = 0.1}, nodes = {
+                create_option_cycle({
+                    options = args.paginate.options,
+                    w = args.paginate.w or 2.5,
+                    cycle_shoulders = true,
+                    opt_callback = "ds_set_pagination",
+                    ref_value = args.paginate.ref_value,
+                    current_option = Decksmith.pages[args.paginate.ref_value] or 1,
+                    colour = args.paginate.colour or G.C.BLUE,
+                    no_pips = true,
+                    focus_args = { snap_to = true, nav = "wide" },
+                })
+            }
+        }
     end
 
     return
@@ -210,6 +224,12 @@ G.FUNCS.ds_random_all = function(e)
 end
 
 G.FUNCS.ds_refresh = function(e)
+    Decksmith.reset_page()
+end
+
+G.FUNCS.ds_set_pagination = function(e)
+    local ref_value = e.cycle_config.ref_value
+    Decksmith.pages[ref_value] = e.cycle_config.current_option
     Decksmith.reset_page()
 end
 
@@ -793,9 +813,9 @@ end
 
 function Decksmith.get_modifier_info()
     return {
-        {key = 'ds_modifier_anaglyph'},
-        {key = 'ds_modifier_plasma'},
-        {key = 'ds_modifier_joker_every_ante'}
+        {key = 'ds_modifier_anaglyph', args = {type = 'toggle', no_random = true, no_reset = true}},
+        {key = 'ds_modifier_plasma', args = {type = 'toggle', no_random = true, no_reset = true}},
+        -- {key = 'ds_modifier_joker_every_ante'}
     }
 end
 

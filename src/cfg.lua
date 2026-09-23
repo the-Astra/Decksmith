@@ -82,3 +82,7 @@ Decksmith.defaults = {
     ds_name = {reset = "My New Deck"},
     ds_author = {reset = "Unknown Author"},
 }
+
+Decksmith.pages = {
+    ds_modifiers = 1
+}
