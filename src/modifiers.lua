@@ -31,7 +31,9 @@ Decksmith.mod.calculate = function(self, context)
         end
     end
 
-    return SMODS.merge_effects(ret)
+    if next(ret) ~= nil then
+        return SMODS.merge_effects(ret)
+    end
 end
 
 local create_card_ref = create_card
