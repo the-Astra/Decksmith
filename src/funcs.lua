@@ -134,7 +134,7 @@ function Decksmith.dropdown_element(value, args)
 
     if not args.no_random then table.insert(Decksmith.this_page_random_options, value) end
     if not args.no_reset then table.insert(Decksmith.this_page_reset_options, value) end
-    table.insert(Decksmith.this_page_dropdowns, value .. '_input')
+    Decksmith.this_page_dropdowns[value .. '_input'] = true
 
     return t
 end

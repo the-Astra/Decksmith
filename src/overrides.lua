@@ -36,12 +36,12 @@ end
 local toggle_dropdown_ref = G.FUNCS.toggle_dropdown_menu
 function G.FUNCS.toggle_dropdown_menu(e)
     toggle_dropdown_ref(e)
-    if e.config.dropdown_obj and Decksmith.this_page_dropdowns and not Decksmith.closing_other_drops and G.OVERLAY_MENU then
+    local opened_drop = e.config.id
+    if e.config.dropdown_obj and Decksmith.this_page_dropdowns and Decksmith.this_page_dropdowns[opened_drop] and not Decksmith.closing_other_drops then
         Decksmith.closing_other_drops = true
-        local opened_drop = e.config.id
-        for _, v in pairs(Decksmith.this_page_dropdowns) do
-            if v ~= opened_drop then
-                local this_drop = G.OVERLAY_MENU:get_UIE_by_ID(v)
+        for k, _ in pairs(Decksmith.this_page_dropdowns) do
+            if k ~= opened_drop then
+                local this_drop = G.OVERLAY_MENU:get_UIE_by_ID(k)
                 if this_drop and this_drop.config.dropdown_obj then
                     G.FUNCS.toggle_dropdown_menu(this_drop)
                 end
