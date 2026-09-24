@@ -33,6 +33,24 @@ function Controller:queue_R_cursor_press(x, y)
     end
 end
 
+local toggle_dropdown_ref = G.FUNCS.toggle_dropdown_menu
+function G.FUNCS.toggle_dropdown_menu(e)
+    toggle_dropdown_ref(e)
+    if e.config.dropdown_obj and Decksmith.this_page_dropdowns and not Decksmith.closing_other_drops and G.OVERLAY_MENU then
+        Decksmith.closing_other_drops = true
+        local opened_drop = e.config.id
+        for _, v in pairs(Decksmith.this_page_dropdowns) do
+            if v ~= opened_drop then
+                local this_drop = G.OVERLAY_MENU:get_UIE_by_ID(v)
+                if this_drop and this_drop.config.dropdown_obj then
+                    G.FUNCS.toggle_dropdown_menu(this_drop)
+                end
+            end
+        end
+        Decksmith.closing_other_drops = nil
+    end
+end
+
 local populate_preview_ref = SMODS.RunSelect.Functions.populate_preview_ui
 function SMODS.RunSelect.Functions.populate_preview_ui(key, to_add, silent, _remove)
     if type(to_add) == 'table' and type(to_add[1]) == "table" then
