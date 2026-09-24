@@ -277,10 +277,24 @@ Decksmith.customize_menu { -- Modifiers
     set_default = function(self, choice)
         local modifier_info = Decksmith.get_modifier_info()
         for _, v in pairs(modifier_info) do
-            Decksmith.start_args[v.key] = Decksmith.start_args[v.key]
+            Decksmith.start_args[v.key] = Decksmith.start_args[v.key] or (not v.args or v.args.type ~= 'toggle') and ''
         end
         return nil
-    end
+    end,
+    start_run = function(self, choice)
+        local modifier_info = Decksmith.get_modifier_info()
+        for _, v in pairs(modifier_info) do
+            if Decksmith.start_args[v.key] ~= '' and Decksmith.start_args[v.key] ~= nil then
+                G.GAME[v.key] = Decksmith.start_args[v.key]
+            end
+        end
+
+        if G.GAME.ds_modifier_all_cards_edition then
+            for _, v in pairs(G.playing_cards) do
+                v:set_edition(G.GAME.ds_modifier_all_cards_edition, true, true)
+            end
+        end
+    end,
 }
 
 Decksmith.customize_menu({ -- Jokers

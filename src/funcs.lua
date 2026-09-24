@@ -14,7 +14,7 @@ function Decksmith.text_input_element(value, args)
 
     local t = {
         n=G.UIT.R, config = { align = 'cr', padding = 0.1}, nodes = {
-            {n=G.UIT.C, config = {align = 'cl', padding = 0.1, minw = 3.8}, nodes = label_nodes},
+            {n=G.UIT.C, config = {align = 'cl', padding = 0.1, minw = args.label_space or 3.8}, nodes = label_nodes},
             {n=G.UIT.C, config = {align = 'cm'}, nodes = {
                 create_text_input {
                     id = value .. '_input',
@@ -58,7 +58,7 @@ function Decksmith.toggle_element(value, args)
 
     local t = {
         n=G.UIT.R, config = { align = 'cr', padding = 0.1}, nodes = {
-            {n=G.UIT.C, config = {align = 'cl', padding = 0.1, minw = 3.8}, nodes = label_nodes},
+            {n=G.UIT.C, config = {align = 'cl', padding = 0.1, minw = args.label_space or 3.8}, nodes = label_nodes},
             {n=G.UIT.C, config = {align = 'cm'}, nodes = {
                 create_toggle {
                     col = true,
@@ -71,6 +71,56 @@ function Decksmith.toggle_element(value, args)
                     ref_value = value,
                     colour = args.colour,
                     shadow = true,
+                }
+            }},
+            {n=G.UIT.C, config = {align='cm'}, nodes = {
+                {n=G.UIT.C, config={minw = 0.2}},
+                Decksmith.create_value_button(not args.no_random and 'random', Decksmith.button_size/1.5, value),
+                {n=G.UIT.C, config={minw = 0.1}},
+                Decksmith.create_value_button(not args.no_reset and 'reset', Decksmith.button_size/1.5, value),
+            }}
+        }
+    }
+
+    if not args.no_random then table.insert(Decksmith.this_page_random_options, value) end
+    if not args.no_reset then table.insert(Decksmith.this_page_reset_options, value) end
+
+    return t
+end
+
+function Decksmith.dropdown_element(value, args)
+    args = args or {}
+    args.colour = args.colour or G.C.BLUE
+    local label = args.label or G.localization.misc.dictionary['k_'..value] or value
+    label = type(label) == 'string' and {label} or label
+
+    local label_nodes = {}
+
+    for _, v in pairs(label) do
+        table.insert(label_nodes, {n=G.UIT.R, config = {align = 'cm'}, nodes = {{n=G.UIT.T, config = {text = v, scale = args.label_size or 0.37, colour = args.label_colour or G.C.WHITE}}}})
+    end
+
+    local t = {
+        n=G.UIT.R, config = { align = 'cr', padding = 0.1}, nodes = {
+            {n=G.UIT.C, config = {align = 'cl', padding = 0.1, minw = args.label_space or 4.5}, nodes = label_nodes},
+            {n=G.UIT.C, config = {align = 'cm'}, nodes = {
+                SMODS.GUI.dropdown_select {
+                    options = args.options,
+                    dropdown_element_def = args.dropdown_element_def,
+                    display_choice_func = args.display_choice_func,
+                    is_option_disabled = args.is_option_disabled,
+                    no_unselect = false,
+                    id = value .. '_input',
+                    default = '',
+                    align = 'cl',
+                    minw = args.w or 2,
+                    max_menu_h = args.max_menu_h or 3,
+                    ref_table = args.ref_table or Decksmith.start_args,
+                    ref_value = value,
+                    colour = args.colour,
+                    border_colour = args.colour,
+                    dropdown_bg_colour = args.bg_colour or G.C.BLACK,
+                    selected_colour = args.selected_colour or lighten(G.C.BLACK, 0.1)
                 }
             }},
             {n=G.UIT.C, config = {align='cm'}, nodes = {
@@ -106,8 +156,8 @@ function Decksmith.create_menu_page(args)
                 options.nodes[#options.nodes + 1] = Decksmith.text_input_element(option[1], option[2])
             elseif option[2].type == 'toggle' then
                 options.nodes[#options.nodes + 1] = Decksmith.toggle_element(option[1], option[2])
-            -- elseif option[2].type == 'dropdown' then
-            --     options.nodes[#options.nodes + 1] = Decksmith.dropdown_element(option[1], option[2])
+            elseif option[2].type == 'dropdown' then
+                options.nodes[#options.nodes + 1] = Decksmith.dropdown_element(option[1], option[2])
             end
         else
             options.nodes[#options.nodes + 1] = option[1] == 'spacer' and {n=G.UIT.R, config = {minh = 0.02, colour = G.C.L_BLACK}} or Decksmith.text_input_element(option[1], option[2])
@@ -854,10 +904,27 @@ function Decksmith.get_rarity_rate_info()
 end
 
 function Decksmith.get_modifier_info()
+    local anaglyph_options = {}
+    for _, v in pairs(G.P_TAGS) do
+        anaglyph_options[#anaglyph_options+1] = v.key
+    end
+
+    local joker_options = {}
+    for _, v in pairs(G.P_CENTER_POOLS.Joker) do
+        joker_options[#joker_options+1] = v.key
+    end
+
+    local edition_options = {}
+    for _, v in pairs(G.P_CENTER_POOLS.Edition) do
+        edition_options[#edition_options+1] = v.key
+    end
+
     return {
-        {key = 'ds_modifier_anaglyph', args = {type = 'toggle', no_random = true, no_reset = true}},
-        {key = 'ds_modifier_plasma', args = {type = 'toggle', no_random = true, no_reset = true}},
-        -- {key = 'ds_modifier_joker_every_ante'}
+        {key = 'ds_modifier_anaglyph', args = {type = 'dropdown', no_random = true, no_reset = true, options = anaglyph_options, display_choice_func = function(opt) return opt ~= '' and localize{ set = 'Tag', type = 'name_text', key = opt} or opt end }},
+        {key = 'ds_modifier_joker_every_ante', args = {type = 'dropdown', no_random = true, no_reset = true, options = joker_options, display_choice_func = function(opt) return opt ~= '' and localize{ set = 'Joker', type = 'name_text', key = opt} or opt end }},
+        {key = 'ds_modifier_ante_joker_edition', args = {type = 'dropdown', no_random = true, no_reset = true, options = edition_options, display_choice_func = function(opt) return opt ~= '' and localize{ set = 'Edition', type = 'name_text', key = opt} or opt end, is_option_disabled = function() return Decksmith.start_args.ds_modifier_joker_every_ante == '' end }},
+        {key = 'ds_modifier_all_cards_edition', args = {type = 'dropdown', no_random = true, no_reset = true, options = edition_options, display_choice_func = function(opt) return opt ~= '' and localize{ set = 'Edition', type = 'name_text', key = opt} or opt end }},
+        {key = 'ds_modifier_plasma', args = {type = 'toggle', no_random = true, no_reset = true, label_space = 4.74}},
     }
 end
 

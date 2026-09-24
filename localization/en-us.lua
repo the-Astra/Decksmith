@@ -52,9 +52,11 @@ return {
             k_ds_joker_rate = 'Jokers',
             k_ds_pcard_rate = 'Playing Cards',
 
-            k_ds_modifier_anaglyph = '+1 Double Tag after Boss',
+            k_ds_modifier_anaglyph = '+1 Tag after Boss',
+            k_ds_modifier_joker_every_ante = 'Spawn Joker each ante',
+            k_ds_modifier_ante_joker_edition = 'Ante Joker has Edition',
+            k_ds_modifier_all_cards_edition = 'All cards have Edition',
             k_ds_modifier_plasma = 'Balance Chips and Mult',
-            k_ds_modifier_joker_every_ante = 'Spawn a Joker every ante',
 
             k_ds_name_deck = 'Name Your Deck',
             k_ds_sign_deck = 'Sign Your Deck',

@@ -14,3 +14,18 @@ payload = '''
 if args.key == '0' and G.CONTROLLER.text_input_hook.config.ref_table and G.CONTROLLER.text_input_hook.config.ref_table.ref_value == "setup_seed" then args.key = 'o' end
 '''
 match_indent = true
+
+[[patches]]
+[patches.pattern]
+target = 'functions/misc_functions.lua'
+pattern = '''
+table.insert(G.playing_cards, _card)
+'''
+position = 'after'
+payload = '''
+if G.GAME.ds_modifier_all_cards_edition then
+    _card:set_edition(G.GAME.ds_modifier_all_cards_edition, true, true)
+end
+'''
+match_indent = true
+times = 1
