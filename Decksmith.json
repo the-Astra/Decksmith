@@ -1,7 +1,6 @@
 {
 	"id": "Decksmith",
-	"name": "Decksmith",
-	"display_name": "Decksmith",
+	"name": "Decksmith [BETA]",
 	"author": ["theAstra"],
 	"description": "A spiritual successor to Deck Creator; Make your own Balatro decks!",
 	"prefix": "ds",

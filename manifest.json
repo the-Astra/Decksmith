@@ -1,6 +1,6 @@
 {
 	"name": "Decksmith",
-	"description": "A spiritual successor to Deck Creator; Make your own Balatro decks!",
+	"description": "[BETA] A spiritual successor to Deck Creator; Make your own Balatro decks!",
 	"version_number": "0.1.0~beta",
 	"website_url": "https://github.com/the-Astra/Decksmith",
 	"dependencies": [
