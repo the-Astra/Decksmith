@@ -90,12 +90,12 @@ function Decksmith.write_deck(path)
     file:open('w')
     file:write('return {\r\n')
     for k, v in pairs(Decksmith.start_args) do
-        if type(v) ~= 'table' and v ~= '' or type(v) == 'table' and next(v) ~= nil then
+        if type(v) ~= 'table' and v ~= '' and v or type(v) == 'table' and next(v) ~= nil then
             file:write('    ' .. tostring(k) .. ' = ')
             local value = Decksmith.serialize_entry(v)
             file:write(tostring(value) .. ',\r\n')
         end
-    end 
+    end
     file:write('}')
     file:close()
     G.FUNCS.ds_open_decks_folder()
