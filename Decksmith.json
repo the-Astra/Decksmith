@@ -12,7 +12,7 @@
 	"version": "0.1.0~beta",
 	"git_owner": "the-Astra",
 	"dependencies": [
-		"Steamodded (>=26.829.0)"
+		"Steamodded (>=26.926.0~dev-a)"
 	],
 	"allow_redistribution": true,
 	"icon_path": "modicon.png"
