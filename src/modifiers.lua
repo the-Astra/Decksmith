@@ -9,7 +9,7 @@ Decksmith.mod.calculate = function(self, context)
 
     if context.round_eval then
         if G.GAME.last_blind and G.GAME.last_blind.boss then
-            if G.GAME.ds_modifier_anaglyph ~= '' then
+            if G.GAME.ds_modifier_anaglyph then
                 G.E_MANAGER:add_event(Event({
                     func = function()
                         add_tag({ key = Decksmith.start_args.ds_modifier_anaglyph })
