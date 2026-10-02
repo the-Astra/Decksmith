@@ -9,7 +9,7 @@ A spiritual successor to Deck Creator; Make your own Balatro decks!! Choose from
 
 ## THIS MOD IS IN BETA!!
 ### What exactly does this mean?
-I have released this mod in beta to give people an opportunity to play around with it early and get a good read on what works, what doesn't, and what people want from this mod. You are highly encouraged to share your decks with others, push limits, and have fun! With that being said, **EXPECT THINGS TO BREAK!!!** This mod took a fair bit of doing to get working, so I do not expect things to be 100% perfect. Please do not hesitate to report any issues you may have come across, be it through this thread or on Github
+I have released this mod in beta to give people an opportunity to play around with it early and get a good read on what works, what doesn't, and what people want from this mod. You are highly encouraged to share your decks with others, push limits, and have fun! With that being said, **EXPECT THINGS TO BREAK!!!** This mod took a fair bit of doing to get working, so I do not expect things to be 100% perfect. Please do not hesitate to report any issues you may have come across, be it through the mod's Balatro Discord thread or on Github
 
 ## Planned Features:
 - Starting Playing Cards (Will take a lot of development effort)
