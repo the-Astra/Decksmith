@@ -1,7 +1,7 @@
 {
 	"name": "Decksmith",
 	"description": "[BETA] A spiritual successor to Deck Creator; Make your own Balatro decks!",
-	"version_number": "0.1.0~beta",
+	"version_number": "0.1.0",
 	"website_url": "https://github.com/the-Astra/Decksmith",
 	"dependencies": [
 		"Steamodded-Steamodded-26.1002.0"
