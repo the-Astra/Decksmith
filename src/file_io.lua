@@ -15,7 +15,7 @@ function Decksmith.get_valid_deck_names()
     local valid_decks = Decksmith.retrieve_valid_decks()
     local names = {}
     for _, v in pairs(valid_decks) do
-        local data = assert(loadstring(SMODS.NFS.read('Decksmith_decks/' .. v.name)))()
+        local data = assert(setfenv(loadstring(SMODS.NFS.read('Decksmith_decks/' .. v.name)), {}))()
         -- if data.name then
             names[v.name] = data.name or v.name -- TODO: Change when proper save naming is implemented
         -- end
