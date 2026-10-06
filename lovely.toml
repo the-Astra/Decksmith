@@ -17,6 +17,21 @@ match_indent = true
 
 [[patches]]
 [patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''
+if hook.config.ref_table.extended_corpus then 
+'''
+position = 'before'
+payload = '''
+if hook.config.ref_table.numeric_corpus then
+    corpus = '0123456789.e'
+end
+'''
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
 target = 'functions/misc_functions.lua'
 pattern = '''
 table.insert(G.playing_cards, _card)

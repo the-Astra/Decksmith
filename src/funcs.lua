@@ -26,7 +26,7 @@ function Decksmith.text_input_element(value, args)
                     ref_value = value,
                     colour = args.colour,
                     hooked_colour = args.hooked_colour or args.colour and darken(args.colour, 0.3),
-                    extended_corpus = true
+                    numeric_corpus = true
                 }
             }},
             {n=G.UIT.C, config = {align='cm'}, nodes = {
