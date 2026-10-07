@@ -314,7 +314,14 @@ Decksmith.customize_menu({ -- Jokers
             G.E_MANAGER:add_event(Event({
                 trigger = 'after', delay = 0.7,
                 func = function()
-                    local c = SMODS.add_card({key = v.key, skip_materialize = true, edition = v.edition, no_edition = not v.edition})
+                    local c = SMODS.add_card({
+                        key = v.key,
+                        skip_materialize = true,
+                        edition = v.edition,
+                        no_edition = not v.edition,
+                        stickers = v.stickers,
+                        force_stickers = true
+                    })
                     c:start_materialize()
                     return true
                 end

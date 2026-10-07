@@ -759,19 +759,25 @@ function Decksmith.handle_duplicate_choices(page_def, choice, remove, start_tabl
         end
 
         if not remove then
+
+            local stickers = {}
+            for k, v in pairs(choice:prototype('stickers')) do
+                table.insert(stickers, v.original_key)
+            end
+
             if selection_limit > 1 then
 
                 local already_selected = #SMODS.RunSelect.Setup.choices[page_def.key]
 
                 if already_selected < selection_limit then
-                    table.insert(SMODS.RunSelect.Setup.choices[page_def.key], { key = choice.config.center.key, edition = choice.edition and choice.edition.key or nil })
+                    table.insert(SMODS.RunSelect.Setup.choices[page_def.key], { key = choice.config.center.key, edition = choice.edition and choice.edition.key or nil, stickers = next(stickers) and stickers or nil })
                     Decksmith.start_args[start_table] = SMODS.RunSelect.Setup.choices[page_def.key]
                 else
                     if choice.juice_up then choice:juice_up() end
                     return
                 end
             else
-                SMODS.RunSelect.Setup.choices[page_def.key] = {{ key = choice.config.center.key, edition = choice.edition and choice.edition.key or nil }}
+                SMODS.RunSelect.Setup.choices[page_def.key] = {{ key = choice.config.center.key, edition = choice.edition and choice.edition.key or nil, stickers = next(stickers) and stickers or nil }}
             end
             if SMODS.RunSelect.Internals.preview_area then Decksmith.handle_verbose_choices_preview(page_def.key, choice.config.center.key, page_def.silent) end
         else
@@ -860,6 +866,11 @@ end
 function Decksmith.apply_card_modifications(card, args)
     if args.edition then
         card:set_edition(args.edition, true, true)
+    end
+    if args.stickers then
+        for _, v in pairs(args.stickers) do
+            card:add_sticker(v, true)
+        end
     end
 end
 
