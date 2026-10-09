@@ -44,3 +44,31 @@ end
 '''
 match_indent = true
 times = 1
+
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = '''
+SMODS.remove_pool(available_rarities, v.key)
+'''
+position = 'at'
+payload = '''
+if not G.GAME['ds_'..string.lower(v.key)..'_mod_as_weight'] then
+    SMODS.remove_pool(available_rarities, v.key)
+end
+'''
+match_indent = true
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = '''=[SMODS _ "src/utils.lua"]'''
+pattern = '''
+v.weight = SMODS.Rarities[v.key]:get_weight(v.weight, SMODS.ObjectTypes[_pool_key])
+'''
+position = 'after'
+payload = '''
+if G.GAME['ds_'..string.lower(v.key)..'_mod_as_weight'] and v.weight == 0 then v.weight = 1 end
+'''
+match_indent = true
+times = 1

@@ -64,3 +64,12 @@ local get_starting_params_ref = get_starting_params
 function get_starting_params()
     return Decksmith.modifer_starting_params(get_starting_params_ref())
 end
+
+local legendary_weight_ref = SMODS.Rarities['Legendary'].get_weight
+SMODS.Rarities['Legendary'].get_weight = function(self, weight, object_type)
+    local ret = legendary_weight_ref(self, weight, object_type)
+        if G.GAME['ds_legendary_mod_as_weight'] then
+            ret = 1
+        end
+    return ret
+end
