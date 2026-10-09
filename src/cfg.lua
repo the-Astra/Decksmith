@@ -94,3 +94,5 @@ Decksmith.pages = {
     ds_rarities = 1,
     ds_modifiers = 1
 }
+
+table.insert(SMODS.ObjectTypes.Joker.rarities, {key = 'Legendary'})

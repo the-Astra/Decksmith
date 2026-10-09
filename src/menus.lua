@@ -237,11 +237,15 @@ Decksmith.customize_menu { -- Rarities
         for _, v in pairs(Decksmith.get_rarity_rate_info()) do
             local new_mod = G.GAME[v.original_key .. '_mod']
             if new_mod and tonumber(Decksmith.start_args[v.key]) then
-                new_mod = Decksmith.start_args[v.key] / v.default_weight
+                if v.default_weight ~= 0 then
+                    new_mod = Decksmith.start_args[v.key] / v.default_weight
+                else
+                    G.GAME['ds_' .. v.original_key .. '_mod_as_weight'] = true
+                    new_mod = Decksmith.start_args[v.key]
+                end
             end
             G.GAME[v.original_key .. '_mod'] = new_mod
         end
-        return true;
     end
 }
 
