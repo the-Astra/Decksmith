@@ -874,7 +874,7 @@ function Decksmith.get_ctype_rate_info()
             args = {
                 label = localize('k_'..key),
                 prompt_text = v.shop_rate and tostring(v.shop_rate) or Decksmith.defaults['ds_' .. key .. '_rate'] and Decksmith.defaults['ds_' .. key .. '_rate'].reset or 0,
-                no_random = not Decksmith.defaults['ds_' .. key .. '_rate'] or not Decksmith.defaults['ds_' .. key .. '_rate'].min and Decksmith.defaults['ds_' .. key .. '_rate'].max,
+                no_random = not Decksmith.defaults['ds_' .. key .. '_rate'] or not (Decksmith.defaults['ds_' .. key .. '_rate'].min and Decksmith.defaults['ds_' .. key .. '_rate'].max),
                 no_reset = not Decksmith.defaults['ds_' .. key .. '_rate'] or not Decksmith.defaults['ds_' .. key .. '_rate'].reset
             }
         })
@@ -895,7 +895,7 @@ function Decksmith.get_rarity_rate_info()
             args = {
                 label = localize('k_'..key),
                 prompt_text = v.default_weight and tostring(v.default_weight) or Decksmith.defaults['ds_' .. key .. '_rate'] and Decksmith.defaults['ds_' .. key .. '_rate'].reset or 1,
-                no_random = not Decksmith.defaults['ds_' .. key .. '_rate'] or not Decksmith.defaults['ds_' .. key .. '_rate'].min and Decksmith.defaults['ds_' .. key .. '_rate'].max,
+                no_random = not Decksmith.defaults['ds_' .. key .. '_rate'] or not (Decksmith.defaults['ds_' .. key .. '_rate'].min and Decksmith.defaults['ds_' .. key .. '_rate'].max),
                 no_reset = not Decksmith.defaults['ds_' .. key .. '_rate'] or not Decksmith.defaults['ds_' .. key .. '_rate'].reset
             }
         })
