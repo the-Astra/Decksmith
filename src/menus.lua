@@ -480,6 +480,7 @@ Decksmith.customize_menu({ -- Vouchers
     handle_choice = function(self, choice, remove)
         if not Decksmith.start_args.banned_keys or not Decksmith.start_args.banned_keys[choice.config.center.key] then
             SMODS.RunSelectPage.handle_choice(self, choice, remove)
+            Decksmith.start_args.ds_starting_vouchers = Decksmith.start_args.ds_starting_vouchers or {}
             if remove then
                 Decksmith.start_args.ds_starting_vouchers[choice.config.center.key] = nil
             else
